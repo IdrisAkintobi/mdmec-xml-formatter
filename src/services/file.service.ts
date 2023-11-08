@@ -7,7 +7,7 @@ import { FileProcessor } from '../infrastructure/file.processor';
 export class FileService {
     constructor(@Inject(FileProcessor) private fileProcessor: FileProcessor) {}
 
-    async processFile(file: Express.Multer.File, imageOnly = false): Promise<void> {
+    async processFile(file: Express.Multer.File, isImageOnly = false): Promise<void> {
         // delete temp directory and previous result if they exists
         await rm(tempDir, { recursive: true, force: true });
         await rm(zipDir, { recursive: true, force: true });
@@ -15,6 +15,6 @@ export class FileService {
         await mkdir(tempDir, { recursive: true });
 
         // process file
-        await this.fileProcessor.processCSVFile(file, imageOnly);
+        await this.fileProcessor.processCSVFile(file, isImageOnly);
     }
 }

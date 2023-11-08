@@ -1,6 +1,7 @@
 import {
     Controller,
     Header,
+    HttpCode,
     HttpStatus,
     ParseFilePipeBuilder,
     Post,
@@ -19,6 +20,7 @@ export class FileController {
 
     @UseInterceptors(FileInterceptor('file'))
     @Post('mdmec')
+    @HttpCode(HttpStatus.OK)
     @Header('Content-Disposition', 'attachment; filename="result.zip"')
     async uploadMDMECRecordFile(
         @UploadedFile(
@@ -35,6 +37,7 @@ export class FileController {
 
     @UseInterceptors(FileInterceptor('file'))
     @Post('image-only')
+    @HttpCode(HttpStatus.OK)
     @Header('Content-Disposition', 'attachment; filename="result.zip"')
     async uploadImageRecordFile(
         @UploadedFile(
