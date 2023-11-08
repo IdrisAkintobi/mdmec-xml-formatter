@@ -17,7 +17,7 @@ import {
 
 @Injectable()
 export class MdMecMapper {
-    mapFeature(data: ParsedType): FeatureType {
+    map(data: ParsedType): FeatureType {
         const useRating = data['Rating'].toLowerCase() === 'yes';
         const category = data['Category'];
 
@@ -150,10 +150,10 @@ export class MdMecMapper {
                 '@language': LanguageEnum[LangRemap[languages[i]]],
                 'md:TitleDisplayUnlimited': titleDisplay[i],
                 'md:TitleSort': titleSort[i]?.trim() || '',
-                ...(i === 0 && { ['ArtReference']: this.mapArtReference(data) }),
+                ...(i === 0 && { ['md:ArtReference']: this.mapArtReference(data) }),
                 'md:Summary190': summary190[i]?.trim() || '',
                 'md:Summary400': summary400[i]?.trim() || '',
-                ...(i === 0 && { ['Genre']: this.mapGenre(data) }),
+                ...(i === 0 && { ['md:Genre']: this.mapGenre(data) }),
             });
         }
 
@@ -249,7 +249,6 @@ export class MdMecMapper {
     private mapPeople(data: ParsedType): MdPerson[] {
         const jobFunction = data['Cast:JobFunction'].split(';');
         const billingBlockOrder = data['Cast:BillingBlockOrder'].split(';');
-        // const displayName = data['md:DisplayName'].split(';');
         const displayNameLanguage = data['Cast:DisplayName:language'].split(';');
         const displayNameObj = displayNameLanguage.reduce((acc: Record<string, string[]>, lang: LanguageEnum) => {
             const key = `Cast:DisplayName${lang === LanguageEnum.EnUS ? '' : ':' + LanguageEnum[LangRemap[lang]]}`;

@@ -41,12 +41,12 @@ export type MdAssociatedOrg = {
 
 export type MdLocalizedInfo = {
     '@language': LanguageEnum;
-    'md:TitleDisplayUnlimited': string;
+    'md:TitleDisplayUnlimited'?: string;
     'md:TitleSort'?: MdSummary190Class;
     'md:ArtReference'?: MdArtReference[];
     'md:Summary190'?: MdSummary190Class;
     'md:Summary400': string;
-    'md:Genre': MdGenre[];
+    'md:Genre'?: MdGenre[];
 };
 
 export type MdArtReference = {
