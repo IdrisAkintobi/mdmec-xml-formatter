@@ -1,20 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { parse } from 'csv-parse';
+import { DataType, ImageOnlyDataType, dataToImageOnlyXml, dataToMdmecXml } from 'mdmec-xml-maker';
 import { writeFile } from 'node:fs/promises';
 import { zip } from 'zip-a-folder';
 import { tempDir, zipDir } from '../app.module';
-import { ImageOnlyMdMecMapper } from '../domain/mappers/mdmec-image-only.mapper';
-import { MdMecMapper } from '../domain/mappers/mdmec.mapper';
-import { ImageOnlyParsedType } from '../domain/types/image-only-parsed.type';
-import { ParsedType } from '../domain/types/parsed.type';
-import { validateXML, xmlBuilder, xmlPrefix } from './xml.builder';
 
 @Injectable()
 export class FileProcessor {
-    constructor(
-        @Inject(MdMecMapper) private mdMecMapper: MdMecMapper,
-        @Inject(ImageOnlyMdMecMapper) private imageOnlyMdMecMapper: ImageOnlyMdMecMapper,
-    ) {}
+    constructor() {}
 
     async processCSVFile(file: Express.Multer.File, isImageOnly: boolean): Promise<void> {
         if (isImageOnly) {
@@ -29,7 +22,7 @@ export class FileProcessor {
         await zip(tempDir, zipDir);
     }
 
-    private parseCsvFile(file: Express.Multer.File): Promise<Array<ParsedType | ImageOnlyParsedType>> {
+    private parseCsvFile(file: Express.Multer.File): Promise<Array<DataType | ImageOnlyDataType>> {
         return new Promise((resolve, reject) => {
             parse(file.buffer, { delimiter: ',', columns: true, trim: true }, (err, data) => {
                 if (err) {
@@ -41,13 +34,9 @@ export class FileProcessor {
         });
     }
 
-    private async processDoc(data: ParsedType): Promise<void> {
+    private async processDoc(data: DataType): Promise<void> {
         try {
-            const objData = this.mdMecMapper.map(data);
-            const xmlData = xmlPrefix + xmlBuilder.build(objData);
-
-            // validate xml
-            validateXML(xmlData);
+            const xmlData = dataToMdmecXml(data);
 
             // write to file
             const fileTitle = data.TitleDisplay.split(';')[0].trim();
@@ -60,13 +49,9 @@ export class FileProcessor {
         }
     }
 
-    private async processImageOnlyDoc(data: ImageOnlyParsedType): Promise<void> {
+    private async processImageOnlyDoc(data: ImageOnlyDataType): Promise<void> {
         try {
-            const objData = this.imageOnlyMdMecMapper.map(data);
-            const xmlData = xmlPrefix + xmlBuilder.build(objData);
-
-            // validate xml
-            validateXML(xmlData);
+            const xmlData = dataToImageOnlyXml(data);
 
             // write to file
             const fileTitle = data.ArtReference.split(';')[0].trim();
