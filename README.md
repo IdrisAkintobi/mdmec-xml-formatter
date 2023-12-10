@@ -1,8 +1,8 @@
-# Movielabs Media Entertainment Core (MEC) formatter
+# CSV to Movielabs Media Entertainment Core (MEC) formatter
 
 ## Description
 
-This is a simple Node.js application that uses the [NestJS](https://nestjs.com/) framework. The package converts a predefined CSV file into Movielabs Media Entertainment Core (MEC) spec v2.9 xml format.
+This is a simple Node.js application utilizing the [NestJS](https://nestjs.com/) framework. The application converts a predefined CSV file into the Movielabs Media Entertainment Core (MEC) specification v2.9 XML format, which is required by Amazon Prime Video for uploading video content. The application efficiently zips all the converted files and provides the resulting zip file for download.
 
 ## Requirements
 
@@ -33,12 +33,6 @@ $ npm run start:prod
 ```bash
 # unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
 
 ## Code Structure
