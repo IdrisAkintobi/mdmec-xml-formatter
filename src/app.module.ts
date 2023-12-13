@@ -11,6 +11,6 @@ export const zipDir = join(__dirname, '../result.zip');
 @Module({
     imports: [],
     controllers: [FileController],
-    providers: [FileService, FileProcessor],
+    providers: [FileService, { provide: 'FileProcessor', useClass: FileProcessor }],
 })
 export class AppModule {}
