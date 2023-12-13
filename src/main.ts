@@ -3,8 +3,6 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './decorators/all.exception.filter';
 
 const port = process.env.PORT || 3000;
-// set node env to production
-process.env.NODE_ENV = 'production';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);

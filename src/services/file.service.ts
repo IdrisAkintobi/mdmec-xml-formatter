@@ -5,7 +5,7 @@ import { FileProcessor } from '../infrastructure/file.processor';
 
 @Injectable()
 export class FileService {
-    constructor(@Inject(FileProcessor) private fileProcessor: FileProcessor) {}
+    constructor(@Inject('FileProcessor') private fileProcessor: FileProcessor) {}
 
     async processFile(file: Express.Multer.File, isImageOnly = false): Promise<void> {
         // delete temp directory and previous result if they exists
