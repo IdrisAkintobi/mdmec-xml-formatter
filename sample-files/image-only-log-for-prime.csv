@@ -1,0 +1,3 @@
+ContentID,LocalizedInfo:language,ArtReference,ArtReference:resolution,ArtReference:purpose,ReleaseYear,WorkType,Identifier:Namespace,Identifier,OrganizationID,OrganizationRole
+md:cid:org:amzn_example:suicidesquadseason,en-US;de-DE;ja-JP,TheGreatMovie-US-4x3.jpg;TheGreatMovie-US-16x9.jpg;TheGreatMovie-US-3x4.jpg,2560x1920;3840x2160;1920x2560,Boxart;cover;hero,2015,movie,ORG;IMDB,suicidesquadfeature;tt4518590,prodtest,licensor
+md:cid:org:amzn_example:suicidesquadfeature,en-US,TheGreatMovie-US-16x9.jpg; TheGreatMovie-US-3x4.jpg,3840x2160;1920x2560,cover;hero,2012,movie,IMDB,tt4514985,prodtest,licensor
