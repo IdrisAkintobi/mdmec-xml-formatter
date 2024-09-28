@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
-import { MockProxy, mock } from 'jest-mock-extended';
+import { mock, MockProxy } from 'jest-mock-extended';
+import { FileVariant } from '../../../src/controllers/dto/file-variant.enum';
 import { FileProcessor } from '../../../src/infrastructure/file.processor';
 
 jest.mock('csv-parse');
@@ -34,8 +35,8 @@ describe('FileProcessor', () => {
 
         it('should call parseCsvFile', () => {
             const mockFile = { buffer: 'Buffer' } as unknown as Express.Multer.File;
-            fileProcessor.processCSVFile(mockFile, true);
-            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(mockFile, true);
+            fileProcessor.processCSVFile(mockFile, FileVariant.MEC);
+            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(mockFile, FileVariant.MEC);
             expect(fileProcessorMock.processCSVFile).toHaveBeenCalledTimes(1);
         });
     });
