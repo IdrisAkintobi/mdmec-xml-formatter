@@ -1,8 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MockProxy, mock } from 'jest-mock-extended';
+import { mock, MockProxy } from 'jest-mock-extended';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { FileVariant } from '../../src/controllers/dto/file-variant.enum';
 import { FileService } from '../../src/services/file.service';
 
 jest.mock('node:fs');
@@ -30,32 +31,35 @@ describe('AppController (e2e)', () => {
     });
 
     describe('/upload (POST)', () => {
-        const mdmecPath = '/upload/mdmec';
-        const ImageOnlyPath = '/upload/image-only';
+        const path = '/upload';
         const txtFile = './test/e2e/test-files/test.txt';
         const csvFile = './test/e2e/test-files/test.csv';
 
         it.each([
-            ['should return 422 when file is not csv - mdmec', mdmecPath],
-            ['should return 422 when file is not csv - image-only', ImageOnlyPath],
-        ])('%s', async (_, path) => {
-            await request(app.getHttpServer()).post(path).attach('file', txtFile).expect(422);
+            ['should return 422 when file is not csv - mec', FileVariant.MEC],
+            ['should return 422 when file is not csv - mmc', FileVariant.MMC],
+            ['should return 422 when file is not csv - image-only', FileVariant.ImageOnly],
+        ])('%s', async (_, variant) => {
+            await request(app.getHttpServer()).post(path).attach('file', txtFile).field('variant', variant).expect(422);
         });
 
         it.each([
-            ['should return 200 when file is valid - mdmec', mdmecPath],
-            ['should return 200 when file is valid - image-only', ImageOnlyPath],
-        ])('%s', async (_, path) => {
-            await request(app.getHttpServer()).post(path).attach('file', csvFile).expect(200);
+            ['should return 200 when file is valid - mec', FileVariant.MEC],
+            ['should return 200 when file is valid - mmc', FileVariant.MMC],
+            ['should return 200 when file is valid - image-only', FileVariant.ImageOnly],
+        ])('%s', async (_, variant) => {
+            await request(app.getHttpServer()).post(path).attach('file', csvFile).field('variant', variant).expect(200);
         });
 
         it.each([
-            ['should return result.zip as download - mdmec', mdmecPath],
-            ['should return result.zip as download - image-only', ImageOnlyPath],
-        ])('%s', async (_, path) => {
+            ['should return result.zip as download - mec', FileVariant.MEC],
+            ['should return result.zip as download - mmc', FileVariant.MMC],
+            ['should return result.zip as download - image-only', FileVariant.ImageOnly],
+        ])('%s', async (_, variant) => {
             await request(app.getHttpServer())
                 .post(path)
                 .attach('file', csvFile)
+                .field('variant', variant)
                 .expect(200)
                 .expect('Content-Disposition', 'attachment; filename="result.zip"');
         });
