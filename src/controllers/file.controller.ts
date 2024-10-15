@@ -34,7 +34,7 @@ export class FileController {
         file: Express.Multer.File,
         @Body() uploadMmcMecDto: UploadMmcMecDto,
     ): Promise<StreamableFile> {
-        await this.fileService.processFile(file, uploadMmcMecDto.variant);
+        await this.fileService.processFile(file, uploadMmcMecDto);
         return new StreamableFile(createReadStream(zipDir));
     }
 }

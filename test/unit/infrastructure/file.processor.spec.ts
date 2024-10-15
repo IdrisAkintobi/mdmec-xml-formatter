@@ -35,8 +35,9 @@ describe('FileProcessor', () => {
 
         it('should call parseCsvFile', () => {
             const mockFile = { buffer: 'Buffer' } as unknown as Express.Multer.File;
-            fileProcessor.processCSVFile(mockFile, FileVariant.MEC);
-            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(mockFile, FileVariant.MEC);
+            const config = { variant: FileVariant.MEC };
+            fileProcessor.processCSVFile(mockFile, config);
+            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(mockFile, config);
             expect(fileProcessorMock.processCSVFile).toHaveBeenCalledTimes(1);
         });
     });

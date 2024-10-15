@@ -35,42 +35,45 @@ describe('FileService', () => {
             // Mock the processCSVFile method of FileProcessor
             fileProcessorMock.processCSVFile.mockResolvedValue(undefined);
 
-            await fileService.processFile(fileMock, FileVariant.MEC);
+            const config = { variant: FileVariant.MEC };
+            await fileService.processFile(fileMock, config);
 
             // Assert previous result and temp directory are deleted
             expect(rm).toHaveBeenCalledWith(tempDir, { recursive: true, force: true });
             expect(rm).toHaveBeenCalledWith(zipDir, { recursive: true, force: true });
             expect(mkdir).toHaveBeenCalledWith(tempDir, { recursive: true });
             // Assert processCSVFile is called with the correct arguments
-            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(fileMock, FileVariant.MEC);
+            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(fileMock, config);
         });
 
         it('should process file with isImageOnly variant', async () => {
             // Mock the processCSVFile method of FileProcessor
             fileProcessorMock.processCSVFile.mockResolvedValue(undefined);
 
-            await fileService.processFile(fileMock, FileVariant.ImageOnly);
+            const config = { variant: FileVariant.ImageOnly };
+            await fileService.processFile(fileMock, config);
 
             // Assert previous result and temp directory are deleted
             expect(rm).toHaveBeenCalledWith(tempDir, { recursive: true, force: true });
             expect(rm).toHaveBeenCalledWith(zipDir, { recursive: true, force: true });
             expect(mkdir).toHaveBeenCalledWith(tempDir, { recursive: true });
             // Assert processCSVFile is called with the correct arguments
-            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(fileMock, FileVariant.ImageOnly);
+            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(fileMock, config);
         });
 
         it('should process file with MMC variant', async () => {
             // Mock the processCSVFile method of FileProcessor
             fileProcessorMock.processCSVFile.mockResolvedValue(undefined);
 
-            await fileService.processFile(fileMock, FileVariant.MMC);
+            const config = { variant: FileVariant.MMC };
+            await fileService.processFile(fileMock, config);
 
             // Assert previous result and temp directory are deleted
             expect(rm).toHaveBeenCalledWith(tempDir, { recursive: true, force: true });
             expect(rm).toHaveBeenCalledWith(zipDir, { recursive: true, force: true });
             expect(mkdir).toHaveBeenCalledWith(tempDir, { recursive: true });
             // Assert processCSVFile is called with the correct arguments
-            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(fileMock, FileVariant.MMC);
+            expect(fileProcessorMock.processCSVFile).toHaveBeenCalledWith(fileMock, config);
         });
     });
 });
