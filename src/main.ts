@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './decorators/all.exception.filter';
+import { AllExceptionsFilter } from './filters/all.exception.filter';
 
 const port = process.env.PORT || 3000;
 

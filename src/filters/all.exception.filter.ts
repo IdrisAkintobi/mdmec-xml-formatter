@@ -6,11 +6,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
     catch(exception: unknown, host: ArgumentsHost): void {
-        // In certain situations `httpAdapter` might not be available in the
-        // constructor method, thus we should resolve it here.
+        // Log the exception details for debugging
         const { httpAdapter } = this.httpAdapterHost;
-
         const ctx = host.switchToHttp();
+        const request = ctx.getRequest();
+        const response = ctx.getResponse();
 
         const httpStatus =
             exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
@@ -18,11 +18,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const responseBody = {
             statusCode: httpStatus,
             timestamp: new Date().toISOString(),
-            path: httpAdapter.getRequestUrl(ctx.getRequest()),
+            path: httpAdapter.getRequestUrl(request),
             message: exception instanceof Error ? exception.message : exception,
             stack: exception instanceof Error && process.env.NODE_ENV === 'development' ? exception?.stack : undefined,
         };
 
-        httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+        // Send the response back to the client
+        httpAdapter.reply(response, responseBody, httpStatus);
     }
 }
