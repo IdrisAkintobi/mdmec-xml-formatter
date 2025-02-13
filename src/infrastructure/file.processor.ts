@@ -53,8 +53,9 @@ export class FileProcessor {
     }
 
     private async processMecDoc(data: mecDataType[]): Promise<void> {
+        let i = 0;
         try {
-            for (let i = 0; i < data.length; i++) {
+            for (; i < data.length; i++) {
                 const xmlData = dataToMECXml(data[i]);
 
                 // write to file
@@ -67,13 +68,15 @@ export class FileProcessor {
                 await writeFile(filePath, xmlData);
             }
         } catch (err) {
-            throw new Error(`Error processing MEC doc: ${err.message}`);
+            console.log('An error occurred at index', i + 2, err);
+            throw new Error(`Error processing MEC doc at line ${i + 2}: ${err.message}`);
         }
     }
 
     private async processImageOnlyDoc(data: ImageOnlyDataType[]): Promise<void> {
+        let i = 0;
         try {
-            for (let i = 0; i < data.length; i++) {
+            for (; i < data.length; i++) {
                 const xmlData = dataToImageOnlyXml(data[i]);
 
                 // write to file
@@ -83,13 +86,15 @@ export class FileProcessor {
                 await writeFile(filePath, xmlData);
             }
         } catch (err) {
-            throw new Error(`Error processing Image Only doc: ${err.message}`);
+            console.log('An error occurred at index', i + 2, err);
+            throw new Error(`Error processing Image Only doc at line ${i + 2}: ${err.message}`);
         }
     }
 
     private async processMmcDoc(data: mmcDataType[]): Promise<void> {
+        let i = 0;
         try {
-            for (let i = 0; i < data.length; i++) {
+            for (; i < data.length; i++) {
                 const xmlData = dataToMMCXml(data[i]);
 
                 // write to file
@@ -99,7 +104,8 @@ export class FileProcessor {
                 await writeFile(filePath, xmlData);
             }
         } catch (err) {
-            throw new Error(`Error processing MMC doc: ${err.message}`);
+            console.log('An error occurred at index', i + 2, err);
+            throw new Error(`Error processing MMC doc at line ${i + 2}: ${err.message}`);
         }
     }
 }
