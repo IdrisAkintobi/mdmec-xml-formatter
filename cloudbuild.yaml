@@ -1,0 +1,36 @@
+steps:
+    - name: 'gcr.io/cloud-builders/docker'
+      id: 'build images'
+      script: |
+          docker build \
+              --label org.opencontainers.image.source="https://github.com/Wi-flx/mec-mmc-formatter" \
+              --label org.opencontainers.image.revision="$COMMIT_SHA" \
+              --label org.opencontainers.image.title="wiflix-mec-mmc-formatter" \
+              --label org.opencontainers.image.version="latest" \
+              --label org.opencontainers.image.created="$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+              --label org.opencontainers.image.authors="Wi-flix Eng <tech@wi-flix.com>" \
+              -t us-central1-docker.pkg.dev/$PROJECT_ID/wiflix-docker-repo/wiflix-mec-mmc-formatter:latest .
+      automapSubstitutions: true
+
+    - name: 'gcr.io/cloud-builders/docker'
+      id: 'push images'
+      script: |
+          docker push us-central1-docker.pkg.dev/$PROJECT_ID/wiflix-docker-repo/wiflix-mec-mmc-formatter
+      automapSubstitutions: true
+
+    - name: 'gcr.io/cloud-builders/gcloud'
+      id: 'deploy image to cloud run'
+      args:
+          [
+              'run',
+              'deploy',
+              'wiflix-mec-mmc-formatter',
+              '--image',
+              'us-central1-docker.pkg.dev/$PROJECT_ID/wiflix-docker-repo/wiflix-mec-mmc-formatter:latest',
+              '--region',
+              'us-central1',
+              '--platform',
+              'managed',
+              '--allow-unauthenticated',
+              '--labels=build-id=$BUILD_ID',
+          ]
