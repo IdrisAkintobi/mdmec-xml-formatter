@@ -18,7 +18,8 @@
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./jest-e2e.json",
-        "lint-staged": "lint-staged"
+        "lint-staged": "lint-staged",
+        "deploy": "gcloud builds submit --config=cloudbuild.yaml --region=us-central1"
     },
     "lint-staged": {
         "*.{js,ts,md}": [
