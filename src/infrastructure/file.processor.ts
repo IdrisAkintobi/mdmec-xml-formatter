@@ -13,12 +13,16 @@ import { zip } from 'zip-a-folder';
 import { tempDir, zipDir } from '../app.module';
 import { UploadMmcMecDto } from '../controllers/dto/file-upload.dto';
 import { FileVariant } from '../controllers/dto/file-variant.enum';
+import { extractCsvHeaders, validateFileType } from './file-type-detector';
 
 @Injectable()
 export class FileProcessor {
     constructor() {}
 
     async processCSVFile(file: Express.Multer.File, config: UploadMmcMecDto): Promise<void> {
+        // Validate file type before processing
+        this.validateFileTypeMatch(file, config.variant);
+
         const parsedData = await this.parseCsvFile(file, config);
         switch (config.variant) {
             case FileVariant.ImageOnly:
@@ -34,6 +38,18 @@ export class FileProcessor {
                 break;
         }
         await zip(tempDir, zipDir);
+    }
+
+    /**
+     * Validate that uploaded CSV matches the expected file type
+     */
+    private validateFileTypeMatch(file: Express.Multer.File, expectedType: FileVariant): void {
+        try {
+            const headers = extractCsvHeaders(file.buffer);
+            validateFileType(headers, expectedType);
+        } catch (error) {
+            throw new Error(`File validation failed: ${error.message}`);
+        }
     }
 
     private parseCsvFile(
@@ -58,11 +74,12 @@ export class FileProcessor {
             for (; i < data.length; i++) {
                 const xmlData = dataToMECXml(data[i]);
 
-                // write to file
-                const fileTitle = data[i].ContentID.split(':')[4].trim();
+                // write to file - extract filename safely from ContentID
+                const contentIdParts = data[i].ContentID?.split(':') || [];
+                const fileTitle = contentIdParts[4] || contentIdParts[contentIdParts.length - 1] || 'content';
                 const sequenceNumber = data[i].SequenceNumber ? `_${data[i].SequenceNumber}` : '';
                 const fileName = `${
-                    (fileTitle + sequenceNumber).replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_mec'
+                    (fileTitle.trim() + sequenceNumber).replaceAll(/[^a-z0-9]/gi, '_').toLowerCase() + '_mec'
                 }.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
@@ -79,9 +96,15 @@ export class FileProcessor {
             for (; i < data.length; i++) {
                 const xmlData = dataToImageOnlyXml(data[i]);
 
-                // write to file
-                const fileTitle = data[i].ContentID.split(':')[4].trim();
-                const fileName = `${fileTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_image_only'}.xml`;
+                // write to file - extract filename safely from ContentID
+                const contentIdParts = data[i].ContentID?.split(':') || [];
+                const fileTitle = contentIdParts[4] || contentIdParts[contentIdParts.length - 1] || 'content';
+                const fileName = `${
+                    fileTitle
+                        .trim()
+                        .replaceAll(/[^a-z0-9]/gi, '_')
+                        .toLowerCase() + '_image_only'
+                }.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }
@@ -97,9 +120,15 @@ export class FileProcessor {
             for (; i < data.length; i++) {
                 const xmlData = dataToMMCXml(data[i]);
 
-                // write to file
-                const fileTitle = data[i].VideoTrackID.split(':')[4].trim();
-                const fileName = `${fileTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_mmc'}.xml`;
+                // write to file - extract filename safely from VideoTrackID
+                const videoTrackIdParts = data[i].VideoTrackID?.split(':') || [];
+                const fileTitle = videoTrackIdParts[4] || videoTrackIdParts[videoTrackIdParts.length - 1] || 'media';
+                const fileName = `${
+                    fileTitle
+                        .trim()
+                        .replaceAll(/[^a-z0-9]/gi, '_')
+                        .toLowerCase() + '_mmc'
+                }.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }

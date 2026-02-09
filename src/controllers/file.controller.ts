@@ -27,7 +27,6 @@ export class FileController {
     async uploadMDMECRecordFile(
         @UploadedFile(
             new ParseFilePipeBuilder()
-                .addFileTypeValidator({ fileType: 'csv' })
                 .addMaxSizeValidator({ maxSize: 256000 })
                 .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
         )
