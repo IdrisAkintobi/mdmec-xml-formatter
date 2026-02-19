@@ -1,0 +1,118 @@
+{
+    "contentId": "md:cid:org:wiflix:my-epic-movie",
+    "localizedInfo": [
+        {
+            "language": "en-US",
+            "titleDisplay": "My Epic Movie",
+            "titleSort": "Epic Movie",
+            "summary190": "An action-packed adventure through time and space with stunning visuals and compelling characters.",
+            "summary400": "An action-packed adventure through time and space. Join our heroes as they navigate parallel universes, battle cosmic forces, and discover the true meaning of friendship. Featuring stunning visual effects, a powerful musical score, and a cast of unforgettable characters.",
+            "artReference": [
+                {
+                    "reference": "https://cdn.wiflix.com/my-epic-movie/images/cover.jpg",
+                    "resolution": "1920x1080",
+                    "purpose": "cover"
+                },
+                {
+                    "reference": "https://cdn.wiflix.com/my-epic-movie/images/hero.jpg",
+                    "resolution": "3840x2160",
+                    "purpose": "hero"
+                }
+            ]
+        },
+        {
+            "language": "es-ES",
+            "titleDisplay": "Mi Película Épica",
+            "summary400": "Una aventura llena de acción a través del tiempo y el espacio con impresionantes efectos visuales."
+        }
+    ],
+    "genre": [
+        {
+            "primary": "Action",
+            "subGenre": ["Adventure", "Sci-Fi"]
+        }
+    ],
+    "releaseYear": "2024",
+    "releaseDate": "2024-03-15",
+    "releaseHistory": [
+        {
+            "type": "Theatrical",
+            "country": "US",
+            "date": "2024-03-15"
+        },
+        {
+            "type": "Original",
+            "country": "NG",
+            "date": "2024-03-20"
+        },
+        {
+            "type": "SVOD",
+            "country": "US",
+            "date": "2024-06-15"
+        }
+    ],
+    "workType": "movie",
+    "identifier": [
+        {
+            "namespace": "ORG",
+            "value": "wiflix-epic-movie-001"
+        },
+        {
+            "namespace": "IMDB",
+            "value": "tt1234567"
+        }
+    ],
+    "rating": [
+        {
+            "country": "US",
+            "system": "MPAA",
+            "value": "PG-13"
+        },
+        {
+            "country": "GB",
+            "system": "BBFC",
+            "value": "12A"
+        }
+    ],
+    "cast": [
+        {
+            "jobFunction": "Actor",
+            "billingBlockOrder": "1",
+            "displayName": {
+                "en-US": "Jane Smith",
+                "es-ES": "Jane Smith"
+            }
+        },
+        {
+            "jobFunction": "Actor",
+            "billingBlockOrder": "2",
+            "displayName": {
+                "en-US": "John Doe",
+                "es-ES": "John Doe"
+            }
+        },
+        {
+            "jobFunction": "Director",
+            "billingBlockOrder": "3",
+            "displayName": {
+                "en-US": "Sarah Johnson"
+            }
+        },
+        {
+            "jobFunction": "Producer",
+            "billingBlockOrder": "4",
+            "displayName": {
+                "en-US": "Michael Chen"
+            }
+        }
+    ],
+    "originalLanguage": "en",
+    "organization": {
+        "id": "md:orgid:wiflix",
+        "role": "licensor"
+    },
+    "companyDisplayCredit": {
+        "value": "WiFlix Studios",
+        "language": "en-US"
+    }
+}

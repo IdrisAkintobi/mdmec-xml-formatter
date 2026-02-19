@@ -4,10 +4,10 @@ import {
     dataToImageOnlyXml,
     dataToMECXml,
     dataToMMCXml,
-    ImageOnlyDataType,
-    mecDataType,
-    mmcDataType,
-} from 'mdmec-xml-maker';
+    ImageOnlyCSVData,
+    MECCSVData,
+    MMCCSVData,
+} from 'mec-mmc-maker';
 import { writeFile } from 'node:fs/promises';
 import { zip } from 'zip-a-folder';
 import { tempDir, zipDir } from '../app.module';
@@ -26,13 +26,13 @@ export class FileProcessor {
         const parsedData = await this.parseCsvFile(file, config);
         switch (config.variant) {
             case FileVariant.ImageOnly:
-                await this.processImageOnlyDoc(parsedData as ImageOnlyDataType[]);
+                await this.processImageOnlyDoc(parsedData as ImageOnlyCSVData[]);
                 break;
             case FileVariant.MEC:
-                await this.processMecDoc(parsedData as mecDataType[]);
+                await this.processMecDoc(parsedData as MECCSVData[]);
                 break;
             case FileVariant.MMC:
-                await this.processMmcDoc(parsedData as mmcDataType[]);
+                await this.processMmcDoc(parsedData as MMCCSVData[]);
                 break;
             default:
                 break;
@@ -55,7 +55,7 @@ export class FileProcessor {
     private parseCsvFile(
         file: Express.Multer.File,
         { from, to }: Omit<UploadMmcMecDto, 'variant'>,
-    ): Promise<Array<mecDataType | mmcDataType | ImageOnlyDataType>> {
+    ): Promise<Array<MECCSVData | MMCCSVData | ImageOnlyCSVData>> {
         const pointer = { ...(from && { from }), ...(to && { to }) };
         return new Promise((resolve, reject) => {
             parse(file.buffer, { delimiter: ',', columns: true, trim: true, ...pointer }, (err, data) => {
@@ -68,7 +68,7 @@ export class FileProcessor {
         });
     }
 
-    private async processMecDoc(data: mecDataType[]): Promise<void> {
+    private async processMecDoc(data: MECCSVData[]): Promise<void> {
         let i = 0;
         try {
             for (; i < data.length; i++) {
@@ -90,7 +90,7 @@ export class FileProcessor {
         }
     }
 
-    private async processImageOnlyDoc(data: ImageOnlyDataType[]): Promise<void> {
+    private async processImageOnlyDoc(data: ImageOnlyCSVData[]): Promise<void> {
         let i = 0;
         try {
             for (; i < data.length; i++) {
@@ -114,7 +114,7 @@ export class FileProcessor {
         }
     }
 
-    private async processMmcDoc(data: mmcDataType[]): Promise<void> {
+    private async processMmcDoc(data: MMCCSVData[]): Promise<void> {
         let i = 0;
         try {
             for (; i < data.length; i++) {

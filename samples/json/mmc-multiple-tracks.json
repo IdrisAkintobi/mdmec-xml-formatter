@@ -1,0 +1,76 @@
+{
+    "audio": [
+        {
+            "type": "stereo",
+            "language": "en-US",
+            "location": "https://cdn.wiflix.com/my-movie/audio-en.aac"
+        },
+        {
+            "type": "stereo",
+            "language": "es-ES",
+            "location": "https://cdn.wiflix.com/my-movie/audio-es.aac"
+        },
+        {
+            "type": "51",
+            "language": "en-US",
+            "location": "https://cdn.wiflix.com/my-movie/audio-surround.aac"
+        }
+    ],
+    "video": [
+        {
+            "type": "primary",
+            "language": "en-US",
+            "location": "https://cdn.wiflix.com/my-movie/video.mp4",
+            "picture": {
+                "heightPixels": "1080",
+                "widthPixels": "1920"
+            }
+        }
+    ],
+    "subtitle": [
+        {
+            "type": "open",
+            "language": "en-US",
+            "location": "https://cdn.wiflix.com/my-movie/subtitle-en.srt",
+            "frameRate": "23.976",
+            "frameRateMultiplier": "1001/1000",
+            "frameRateTimeCode": "NonDrop"
+        },
+        {
+            "type": "open",
+            "language": "es-ES",
+            "location": "https://cdn.wiflix.com/my-movie/subtitle-es.srt",
+            "frameRate": "23.976",
+            "frameRateMultiplier": "1001/1000",
+            "frameRateTimeCode": "NonDrop"
+        },
+        {
+            "type": "open",
+            "language": "fr-FR",
+            "location": "https://cdn.wiflix.com/my-movie/subtitle-fr.srt",
+            "frameRate": "23.976",
+            "frameRateMultiplier": "1001/1000",
+            "frameRateTimeCode": "NonDrop"
+        }
+    ],
+    "image": [
+        {
+            "purpose": "Cover",
+            "language": "en-US",
+            "location": "https://cdn.wiflix.com/my-movie/cover.jpg"
+        },
+        {
+            "purpose": "Hero",
+            "language": "en-US",
+            "location": "https://cdn.wiflix.com/my-movie/hero.jpg"
+        }
+    ],
+    "presentation": [{}],
+    "experience": [
+        {
+            "type": "Movie",
+            "subType": "Feature"
+        }
+    ],
+    "alidExperience": [{}]
+}

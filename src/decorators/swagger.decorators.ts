@@ -1,5 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { GenerateMECDto } from '../dto/generate/mec.dto';
+import { GenerateMMCDto } from '../dto/generate/mmc.dto';
 
 /**
  * Swagger examples for MMC endpoint
@@ -496,6 +498,7 @@ When you have multiple audio or subtitle tracks, IDs are made unique using langu
       `,
         }),
         ApiBody({
+            type: GenerateMMCDto,
             description: 'MMC data for XML generation',
             examples: MMC_EXAMPLES,
         }),
@@ -574,6 +577,7 @@ For TV show episodes, include the \`category\` field with:
       `,
         }),
         ApiBody({
+            type: GenerateMECDto,
             description: 'MEC data for XML generation',
             examples: MEC_EXAMPLES,
         }),

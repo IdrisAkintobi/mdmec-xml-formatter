@@ -1,0 +1,28 @@
+{
+    "audio": [
+        {
+            "type": "stereo",
+            "language": "en-US",
+            "location": "https://cdn.wiflix.com/chioma-my-love/audio.aac"
+        }
+    ],
+    "video": [
+        {
+            "type": "primary",
+            "language": "en-US",
+            "location": "https://cdn.wiflix.com/chioma-my-love/video.mp4",
+            "picture": {
+                "heightPixels": "1080",
+                "widthPixels": "1920"
+            }
+        }
+    ],
+    "presentation": [{}],
+    "experience": [
+        {
+            "type": "Movie",
+            "subType": "Feature"
+        }
+    ],
+    "alidExperience": [{}]
+}

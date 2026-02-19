@@ -1,0 +1,2 @@
+LocalizedInfo:language,TitleDisplay,Summary190,Summary400,ArtReference,ArtReference:resolution,ArtReference:purpose,Genre,ReleaseDate,ReleaseHistory:Type,ReleaseHistory:Country,ReleaseHistory:Date,WorkType,Rating,Rating:Country,Rating:System,Rating:Value,Cast:JobFunction,Cast:BillingBlockOrder,Cast:DisplayName:language,Cast:DisplayName,OriginalLanguage,Category,SequenceNumber,ParentContentID
+en-US,Simple Movie,A simple story.,A simple movie for testing minimal required fields.,,,,,Drama,2024-01-15,Original,US,2024-01-15,movie,,,,,Actor,1,en-US,Jane Doe,en,,,

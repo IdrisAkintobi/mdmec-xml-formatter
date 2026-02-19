@@ -1,17 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { MECBuilder, MMCBuilder, type MECData, type MMCData } from 'mec-mmc-maker';
+import { ConfigService } from '@nestjs/config';
+import { MECBuilder, MMCBuilder, MovieLabsIDGenerator, type MECData, type MMCData } from 'mec-mmc-maker';
 import { GenerateMECDto } from '../dto/generate/mec.dto';
 import { GenerateMMCDto } from '../dto/generate/mmc.dto';
 
 @Injectable()
 export class GenerateService {
+    constructor(private readonly configService: ConfigService) {}
+
     /**
      * Generate MEC XML from JSON data
      */
     async generateMECXml(data: GenerateMECDto): Promise<string> {
+        const defaultOrg = this.configService.get<string>('app.defaultOrganization', 'wiflix');
+
+        // Auto-generate contentId if not provided but title is available
+        let contentId = data.contentId;
+        if (!contentId && data.localizedInfo?.[0]?.titleDisplay) {
+            const titleSlug = this.createSlugFromTitle(data.localizedInfo[0].titleDisplay);
+            const organization = data.organization?.id || defaultOrg;
+            contentId = MovieLabsIDGenerator.contentID(organization, titleSlug);
+        }
+
+        if (!contentId) {
+            throw new Error('Either contentId or localizedInfo[0].titleDisplay is required');
+        }
+
         // Convert DTO to MECData format
         const mecData: MECData = {
-            contentId: data.contentId,
+            contentId,
             localizedInfo: data.localizedInfo.map(info => ({
                 language: info.language,
                 titleDisplay: info.titleDisplay,
@@ -72,7 +89,8 @@ export class GenerateService {
      * Generate MMC XML from JSON data
      */
     async generateMMCXml(data: GenerateMMCDto): Promise<string> {
-        const organization = data.organization || 'wiflix';
+        const defaultOrg = this.configService.get<string>('app.defaultOrganization', 'wiflix');
+        const organization = data.organization || defaultOrg;
 
         // Auto-generate track IDs if not provided
         const audioTracks = data.audio.map((audio, index) => ({
@@ -278,5 +296,18 @@ export class GenerateService {
     getFilenameFromUrl(url: string): string {
         const slug = this.extractSlugFromUrl(url);
         return slug.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    }
+
+    /**
+     * Create a URL-safe slug from a title
+     * @example "The Matrix: Reloaded" -> "the-matrix-reloaded"
+     */
+    private createSlugFromTitle(title: string): string {
+        return title
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+            .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
     }
 }

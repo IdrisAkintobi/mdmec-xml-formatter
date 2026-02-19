@@ -23,30 +23,56 @@ export enum ExperienceTypeEnum {
 
 /**
  * Video picture information
+ *
+ * **Required Fields:**
+ * - heightPixels: Video height in pixels
+ * - widthPixels: Video width in pixels
+ *
+ * **Optional Fields (Auto-generated if not provided):**
+ * - aspectRatio: Calculated from height/width (e.g., 1920x1080 → 16:9)
+ * - progressive: Progressive scan flag
+ * - progressiveScanOrder: Scan order (TopFirst, BottomFirst)
  */
 export class VideoPictureDto {
-    @ApiProperty({ example: '1080', description: 'Video height in pixels' })
+    @ApiProperty({
+        example: '1080',
+        description: '**REQUIRED** - Video height in pixels (e.g., 1080, 720, 2160)',
+        required: true,
+    })
     @IsString()
     heightPixels: string;
 
-    @ApiProperty({ example: '1920', description: 'Video width in pixels' })
+    @ApiProperty({
+        example: '1920',
+        description: '**REQUIRED** - Video width in pixels (e.g., 1920, 1280, 3840)',
+        required: true,
+    })
     @IsString()
     widthPixels: string;
 
     @ApiPropertyOptional({
         example: '16:9',
-        description: 'Aspect ratio - Will be auto-calculated from dimensions if not provided',
+        description: '**OPTIONAL** - Aspect ratio (e.g., 16:9, 4:3). Auto-calculated from dimensions if not provided.',
+        required: false,
     })
     @IsOptional()
     @IsString()
     aspectRatio?: string;
 
-    @ApiPropertyOptional({ example: true, description: 'Whether video is progressive scan' })
+    @ApiPropertyOptional({
+        example: true,
+        description: '**OPTIONAL** - Whether video is progressive scan (true/false)',
+        required: false,
+    })
     @IsOptional()
     @IsBoolean()
     progressive?: boolean;
 
-    @ApiPropertyOptional({ example: 'TopFirst', description: 'Progressive scan order' })
+    @ApiPropertyOptional({
+        example: 'TopFirst',
+        description: '**OPTIONAL** - Progressive scan order (TopFirst, BottomFirst)',
+        required: false,
+    })
     @IsOptional()
     @IsString()
     progressiveScanOrder?: string;
@@ -54,32 +80,57 @@ export class VideoPictureDto {
 
 /**
  * Audio track information
+ *
+ * **Required Fields:**
+ * - type: Audio type (stereo, 5.1, 7.1, mono, etc.)
+ * - language: Language code (RFC 5646 format, e.g., en-US, es-ES)
+ * - location: Audio file URL or path
+ *
+ * **Optional Fields (Auto-generated if not provided):**
+ * - trackId: Generated as md:audtrackid:org:{org}:{slug}:audio-{lang}
+ * - hash: MD5 hash of audio file
  */
 export class AudioTrackDto {
     @ApiPropertyOptional({
-        example: 'md:audtrackid:org:wiflix:movie:audio1',
-        description: 'Audio Track ID - Will be auto-generated if not provided',
+        example: 'md:audtrackid:org:wiflix:movie:audio-en-us',
+        description:
+            '**OPTIONAL** - Audio Track ID (MovieLabs format). Auto-generated from video URL slug and language if not provided. Format: md:audtrackid:org:{organization}:{content-slug}:audio-{language}',
+        required: false,
     })
     @IsOptional()
     @IsString()
     trackId?: string;
 
-    @ApiProperty({ example: 'stereo', description: 'Audio type (e.g., stereo, 5.1, mono)' })
+    @ApiProperty({
+        example: 'stereo',
+        description: '**REQUIRED** - Audio type. Common values: stereo, 5.1, 7.1, mono, Atmos',
+        required: true,
+    })
     @IsString()
     type: string;
 
-    @ApiProperty({ example: 'en-US', description: 'Audio language code (RFC 5646)' })
+    @ApiProperty({
+        example: 'en-US',
+        description: '**REQUIRED** - Audio language code (RFC 5646). Examples: en-US, es-ES, fr-FR, de-DE, ja-JP',
+        required: true,
+    })
     @IsString()
     language: string;
 
     @ApiProperty({
         example: 'https://s3.amazonaws.com/bucket/audio/en.aac',
-        description: 'Audio file location (URL or path)',
+        description:
+            '**REQUIRED** - Audio file location (URL or path). Supported formats: AAC, MP3, WAV, FLAC, AC3, EAC3',
+        required: true,
     })
     @IsString()
     location: string;
 
-    @ApiPropertyOptional({ example: 'a1b2c3d4e5f6', description: 'MD5 hash of the audio file' })
+    @ApiPropertyOptional({
+        example: 'a1b2c3d4e5f6789',
+        description: '**OPTIONAL** - MD5 hash of the audio file for integrity verification',
+        required: false,
+    })
     @IsOptional()
     @IsString()
     hash?: string;
@@ -87,37 +138,67 @@ export class AudioTrackDto {
 
 /**
  * Video track information
+ *
+ * **Required Fields:**
+ * - type: Video type (primary, trailer, bonus, etc.)
+ * - language: Language code (RFC 5646 format)
+ * - location: Video file URL or path
+ * - picture: Video dimensions and properties
+ *
+ * **Optional Fields (Auto-generated if not provided):**
+ * - trackId: Generated as md:vidtrackid:org:{org}:{slug}:video-{lang}
+ * - hash: MD5 hash of video file
  */
 export class VideoTrackDto {
     @ApiPropertyOptional({
-        example: 'md:vidtrackid:org:wiflix:movie:video',
-        description: 'Video Track ID - Will be auto-generated if not provided',
+        example: 'md:vidtrackid:org:wiflix:movie:video-en-us',
+        description:
+            '**OPTIONAL** - Video Track ID (MovieLabs format). Auto-generated from video URL slug and language if not provided. Format: md:vidtrackid:org:{organization}:{content-slug}:video-{language}',
+        required: false,
     })
     @IsOptional()
     @IsString()
     trackId?: string;
 
-    @ApiProperty({ example: 'primary', description: 'Video type (e.g., primary, trailer)' })
+    @ApiProperty({
+        example: 'primary',
+        description: '**REQUIRED** - Video type. Common values: primary, trailer, bonus, preview',
+        required: true,
+    })
     @IsString()
     type: string;
 
-    @ApiProperty({ example: 'en-US', description: 'Video language code (RFC 5646)' })
+    @ApiProperty({
+        example: 'en-US',
+        description: '**REQUIRED** - Video language code (RFC 5646). Examples: en-US, es-ES, fr-FR',
+        required: true,
+    })
     @IsString()
     language: string;
 
     @ApiProperty({
         example: 'https://s3.amazonaws.com/bucket/video/main.mp4',
-        description: 'Video file location (URL or path)',
+        description:
+            '**REQUIRED** - Video file location (URL or path). The content slug will be extracted from the first path segment after the domain. Example: https://cdn.com/my-movie/video.mp4 → slug: my-movie',
+        required: true,
     })
     @IsString()
     location: string;
 
-    @ApiPropertyOptional({ example: 'v1i2d3e4o5f6', description: 'MD5 hash of the video file' })
+    @ApiPropertyOptional({
+        example: 'v1i2d3e4o5h6a7s8h',
+        description: '**OPTIONAL** - MD5 hash of the video file for integrity verification',
+        required: false,
+    })
     @IsOptional()
     @IsString()
     hash?: string;
 
-    @ApiProperty({ type: VideoPictureDto, description: 'Video picture properties' })
+    @ApiProperty({
+        type: VideoPictureDto,
+        description: '**REQUIRED** - Video picture properties including dimensions',
+        required: true,
+    })
     @ValidateNested()
     @Type(() => VideoPictureDto)
     picture: VideoPictureDto;
@@ -339,12 +420,50 @@ export class ALIDExperienceDto {
 }
 
 /**
- * Complete MMC (Media Manifest Core) data structure
+ * Complete MMC (Media Manifest Core) data structure for XML generation
+ *
+ * **MMC contains technical specifications about your media files:**
+ * - Video, audio, and subtitle track information
+ * - Presentations (how tracks are combined)
+ * - Experiences (content type: Movie, Series, Episode)
+ * - Image assets for artwork
+ *
+ * **REQUIRED TOP-LEVEL FIELDS:**
+ * - audio: Array of audio tracks (at least 1)
+ * - video: Array of video tracks (at least 1)
+ * - presentation: Array of presentations (at least 1, can be empty object)
+ * - experience: Array of experiences (at least 1)
+ * - alidExperience: Array of ALID mappings (at least 1, can be empty object)
+ *
+ * **OPTIONAL TOP-LEVEL FIELDS:**
+ * - subtitle: Subtitle tracks
+ * - image: Image assets (cover, hero, boxart)
+ * - pictureGroup: Groupings of images
+ * - organization: Organization name (defaults to "wiflix")
+ *
+ * **AUTO-GENERATION:**
+ * All track IDs, presentation IDs, experience IDs, and ALIDs are auto-generated from:
+ * - Video location URL (first path segment after domain becomes content slug)
+ * - Language codes (for unique multi-language track IDs)
+ * - Organization name
+ *
+ * Example: https://cdn.com/my-movie/video.mp4
+ * - Content slug: my-movie
+ * - Generated video ID: md:vidtrackid:org:wiflix:my-movie:video-en-us
+ *
+ * **FOR MULTI-LANGUAGE CONTENT:**
+ * Add multiple audio/subtitle tracks with different language codes.
+ * Track IDs will automatically include language for uniqueness:
+ * - audio-en-us, audio-es-es, audio-fr-fr
+ * - subtitle-en-us, subtitle-es-es, subtitle-fr-fr
  */
 export class GenerateMMCDto {
     @ApiProperty({
         type: [AudioTrackDto],
-        description: 'Array of audio tracks',
+        description: '**REQUIRED** - Array of audio tracks (at least 1). Each track requires: type, language, location',
+        required: true,
+        isArray: true,
+        minItems: 1,
         example: [
             {
                 type: 'stereo',
@@ -360,7 +479,11 @@ export class GenerateMMCDto {
 
     @ApiProperty({
         type: [VideoTrackDto],
-        description: 'Array of video tracks',
+        description:
+            '**REQUIRED** - Array of video tracks (at least 1). Each track requires: type, language, location, picture (with heightPixels and widthPixels)',
+        required: true,
+        isArray: true,
+        minItems: 1,
         example: [
             {
                 type: 'primary',
@@ -380,7 +503,10 @@ export class GenerateMMCDto {
 
     @ApiPropertyOptional({
         type: [SubtitleTrackDto],
-        description: 'Array of subtitle tracks (optional)',
+        description:
+            '**OPTIONAL** - Array of subtitle tracks. Each track requires: type, language, location, frameRate, frameRateMultiplier, frameRateTimeCode',
+        required: false,
+        isArray: true,
     })
     @IsOptional()
     @IsArray()
@@ -390,7 +516,10 @@ export class GenerateMMCDto {
 
     @ApiPropertyOptional({
         type: [ImageAssetDto],
-        description: 'Array of image assets (optional)',
+        description:
+            '**OPTIONAL** - Array of image assets (cover art, hero images, boxart). Each image requires: purpose, language, location',
+        required: false,
+        isArray: true,
     })
     @IsOptional()
     @IsArray()
@@ -400,7 +529,11 @@ export class GenerateMMCDto {
 
     @ApiProperty({
         type: [PresentationDto],
-        description: 'Array of presentation configurations',
+        description:
+            '**REQUIRED** - Array of presentations (at least 1). Presentations link video, audio, and subtitle tracks together. Can be an empty object {} to use defaults. All track references will be auto-generated.',
+        required: true,
+        isArray: true,
+        minItems: 1,
         example: [
             {
                 trackNum: '0',
@@ -414,7 +547,10 @@ export class GenerateMMCDto {
 
     @ApiPropertyOptional({
         type: [PictureGroupDto],
-        description: 'Array of picture groups (optional)',
+        description:
+            '**OPTIONAL** - Array of picture groups. Groups multiple images together (e.g., different resolutions of the same artwork)',
+        required: false,
+        isArray: true,
     })
     @IsOptional()
     @IsArray()

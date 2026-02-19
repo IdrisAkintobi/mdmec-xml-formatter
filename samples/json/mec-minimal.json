@@ -1,0 +1,49 @@
+{
+    "contentId": "md:cid:org:wiflix:chioma-my-love",
+    "localizedInfo": [
+        {
+            "language": "en-US",
+            "titleDisplay": "Chioma My Love",
+            "summary400": "A beautiful romantic story set in Lagos about love, family, and tradition."
+        }
+    ],
+    "genre": [
+        {
+            "primary": "Romance"
+        }
+    ],
+    "releaseYear": "2024",
+    "releaseDate": "2024-01-15",
+    "releaseHistory": [
+        {
+            "type": "Original",
+            "country": "NG",
+            "date": "2024-01-15"
+        }
+    ],
+    "workType": "movie",
+    "identifier": [
+        {
+            "namespace": "ORG",
+            "value": "wiflix-chioma-001"
+        }
+    ],
+    "cast": [
+        {
+            "jobFunction": "Actor",
+            "billingBlockOrder": "1",
+            "displayName": {
+                "en-US": "John Doe"
+            }
+        }
+    ],
+    "originalLanguage": "en",
+    "organization": {
+        "id": "md:orgid:wiflix",
+        "role": "licensor"
+    },
+    "companyDisplayCredit": {
+        "value": "WiFlix Studios",
+        "language": "en-US"
+    }
+}
