@@ -176,7 +176,7 @@ MMC example with multiple audio and subtitle tracks.
 
 ### MEC (Metadata Core) CSV Files
 
-#### `minimal-MEC.csv` (25 columns) ✅ RECOMMENDED FOR BEGINNERS
+#### `minimal-MEC.csv` (29 columns) ✅ RECOMMENDED FOR BEGINNERS
 
 **Use this if:** You want the simplest format with auto-generated ContentID.
 
@@ -201,7 +201,7 @@ en-US,Chioma,...
 
 Auto-generates: `md:cid:org:wiflix:chioma`
 
-#### `optimized-MEC.csv` (25 columns) ✅ FULL CONTROL
+#### `optimized-MEC.csv` (29 columns) ✅ FULL CONTROL
 
 **Use this if:** You want to provide your own ContentID.
 
@@ -220,7 +220,7 @@ Legacy MEC format for backward compatibility. Use `minimal-MEC.csv` or `optimize
 
 ### MMC (Manifest Core) CSV Files
 
-#### `minimal-MMC.csv` (21 columns) ✅ RECOMMENDED FOR BEGINNERS
+#### `minimal-MMC.csv` (10 columns) ✅ RECOMMENDED FOR BEGINNERS
 
 **Use this if:** You want the simplest format with auto-generated IDs.
 
@@ -228,13 +228,11 @@ Legacy MEC format for backward compatibility. Use `minimal-MEC.csv` or `optimize
 
 -   VideoType, VideoLanguage, VideoLocation, WidthPixels, HeightPixels
 -   AudioType, AudioLanguage, AudioLocation
--   SubtitleType, SubtitleLanguage, SubtitleLocation, SubtitleFrameRate, SubtitleFrameRateMultiplier, SubtitleFrameRateTimeCode
--   ImagePurpose, ImageLanguage, ImageLocation
 -   ExperienceType, ExperienceSubType
 
 **Auto-generated fields:**
 
--   VideoTrackID, AudioTrackID, SubtitleTrackID, ImageID (from organization + video URL)
+-   VideoTrackID, AudioTrackID (from organization + video URL)
 -   PresentationID, PresentationIDVid, PresentationIDAud, PresentationIDSub, PresentationIDTrackNum
 -   ExperienceID, ALID
 -   AspectRatio (calculated from WidthPixels/HeightPixels)
@@ -339,11 +337,11 @@ VideoLocation,"https://example.com/video.mp4?param1=a,param2=b"
 | File                 | Columns | IDs                      | Best For            |
 | -------------------- | ------- | ------------------------ | ------------------- |
 | **MEC Files**        |         |                          |                     |
-| minimal-MEC.csv      | 25      | Auto (from TitleDisplay) | Simple metadata     |
-| optimized-MEC.csv    | 25      | Auto or Manual           | Custom IDs optional |
+| minimal-MEC.csv      | 29      | Auto (from TitleDisplay) | Simple metadata     |
+| optimized-MEC.csv    | 29      | Auto or Manual           | Custom IDs optional |
 | latest-MEC.csv       | 34      | Manual                   | Legacy              |
 | **MMC Files**        |         |                          |                     |
-| minimal-MMC.csv      | 21      | Auto                     | Beginners           |
+| minimal-MMC.csv      | 10      | Auto                     | Beginners           |
 | optimized-MMC.csv    | 33      | Manual                   | Full control        |
 | mmcParsedType-\*.csv | 41      | Manual                   | Advanced            |
 
