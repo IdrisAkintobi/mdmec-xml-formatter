@@ -84,14 +84,12 @@ curl -X POST http://localhost:3000/generate/mmc \
 curl -X POST http://localhost:3000/generate/mec \
   -H "Content-Type: application/json" \
   -d '{
-    "contentId": "md:cid:org:yourorg:my-movie",
     "localizedInfo": [{
       "language": "en-US",
       "titleDisplay": "My Movie",
       "summary400": "An amazing film about..."
     }],
     "genre": [{"primary": "Action"}],
-    "releaseYear": "2024",
     "releaseDate": "2024-01-15",
     "releaseHistory": [{
       "type": "Original",
@@ -99,17 +97,15 @@ curl -X POST http://localhost:3000/generate/mec \
       "date": "2024-01-15"
     }],
     "workType": "movie",
-    "identifier": [{"namespace": "ORG", "value": "movie-001"}],
     "cast": [{
       "jobFunction": "Actor",
       "billingBlockOrder": "1",
       "displayName": {"en-US": "Actor Name"}
-    }],
-    "originalLanguage": "en",
-    "organization": {"id": "md:orgid:yourorg", "role": "licensor"},
-    "companyDisplayCredit": {"value": "Your Studio", "language": "en-US"}
+    }]
   }'
 ```
+
+**Note:** Fields like `contentId`, `releaseYear`, `identifier`, `originalLanguage`, `organization`, and `companyDisplayCredit` are auto-generated if not provided.
 
 **See Full Examples**: Check the `samples/json/` directory for complete JSON payloads including multi-language content, subtitles, and more.
 
@@ -132,6 +128,18 @@ curl -X POST http://localhost:3000/upload \
 ### Auto-Generated Fields
 
 The JSON API automatically generates MovieLabs-compliant IDs:
+
+**MEC (Metadata) Auto-Generation:**
+
+-   **ContentID**: Auto-generated from `titleDisplay` (e.g., "The Matrix" → `md:cid:org:wiflix:the-matrix`)
+-   **ReleaseYear**: Auto-extracted from `releaseDate` (e.g., "2024-03-15" → "2024")
+-   **Identifier**: Auto-generated from ContentID with namespace "ORG"
+-   **OriginalLanguage**: Auto-defaults to first `localizedInfo` language (e.g., "en-US" → "en")
+-   **Organization**: Auto-generated from `DEFAULT_ORGANIZATION` config (e.g., "wiflix" → `md:orgid:wiflix`)
+-   **CompanyDisplayCredit**: Auto-capitalized organization name (e.g., "wiflix" → "Wiflix")
+-   **ParentContentID**: Auto-generated from `parentTitleDisplay` for episodic content
+
+**MMC (Manifest) Auto-Generation:**
 
 -   **Track IDs**: Video, audio, subtitle, and image track identifiers
 -   **Presentation IDs**: Derived from video location URLs

@@ -28,11 +28,17 @@ samples/
 
 ### 🎉 Zero Configuration Required - All IDs Auto-Generated!
 
-**You don't need to provide ANY MovieLabs IDs!** Just provide your media files and content details:
+**You don't need to provide ANY MovieLabs IDs or organization details!** Just provide your media files and content details:
 
 **For MEC (Metadata):**
 
--   ✅ Just provide `TitleDisplay` → ContentID auto-generated
+-   ✅ `TitleDisplay` → ContentID auto-generated
+-   ✅ `ReleaseDate` → ReleaseYear auto-extracted (e.g., "2024-03-15" → "2024")
+-   ✅ `ContentID` → Identifier auto-generated with namespace "ORG"
+-   ✅ `LocalizedInfo[0].language` → OriginalLanguage auto-defaulted (e.g., "en-US" → "en")
+-   ✅ Organization → Auto-generated from config (md:orgid:wiflix, role: licensor)
+-   ✅ Company Credit → Auto-generated from config (e.g., "Wiflix" from organization name)
+-   ✅ `ParentTitleDisplay` → ParentContentID auto-generated (for episodes: "Game of Thrones Season 1" → md:cid:org:wiflix:game-of-thrones-season-1)
 -   ✅ Example: `"TitleDisplay": "The Matrix"` → `md:cid:org:wiflix:the-matrix`
 
 **For MMC (Manifest):**
@@ -65,7 +71,11 @@ Configure your organization in `.env`:
 DEFAULT_ORGANIZATION=your-company-name
 ```
 
-All auto-generated IDs will use your organization instead of `wiflix`.
+**What gets auto-generated:**
+
+-   All MovieLabs IDs use your organization
+-   Organization: `md:orgid:your-company-name` with role `licensor`
+-   Company Credit: "Your Company Name" (capitalized from organization)
 
 **Slug Generation Examples:**
 

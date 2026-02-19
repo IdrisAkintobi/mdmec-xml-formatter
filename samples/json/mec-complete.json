@@ -31,7 +31,6 @@
             "subGenre": ["Adventure", "Sci-Fi"]
         }
     ],
-    "releaseYear": "2024",
     "releaseDate": "2024-03-15",
     "releaseHistory": [
         {
@@ -51,16 +50,6 @@
         }
     ],
     "workType": "movie",
-    "identifier": [
-        {
-            "namespace": "ORG",
-            "value": "wiflix-epic-movie-001"
-        },
-        {
-            "namespace": "IMDB",
-            "value": "tt1234567"
-        }
-    ],
     "rating": [
         {
             "country": "US",
@@ -104,14 +93,5 @@
                 "en-US": "Michael Chen"
             }
         }
-    ],
-    "originalLanguage": "en",
-    "organization": {
-        "id": "md:orgid:wiflix",
-        "role": "licensor"
-    },
-    "companyDisplayCredit": {
-        "value": "WiFlix Studios",
-        "language": "en-US"
-    }
+    ]
 }

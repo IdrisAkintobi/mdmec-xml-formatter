@@ -222,6 +222,14 @@ export class CategoryInfoDto {
     @IsString()
     sequenceNumber?: string;
 
+    @ApiPropertyOptional({
+        example: 'Game of Thrones Season 1',
+        description: 'Auto-generates parentContentId from simple title. Provide either this or parentContentId.',
+    })
+    @IsOptional()
+    @IsString()
+    parentTitleDisplay?: string;
+
     @ApiPropertyOptional({ example: 'md:cid:org:wiflix:series-name' })
     @IsOptional()
     @IsString()
@@ -264,9 +272,10 @@ export class GenerateMECDto {
     @Type(() => GenreDto)
     genre: GenreDto[];
 
-    @ApiProperty({ example: '1999' })
+    @ApiPropertyOptional({ example: '1999', description: 'Auto-extracted from releaseDate if not provided' })
+    @IsOptional()
     @IsString()
-    releaseYear: string;
+    releaseYear?: string;
 
     @ApiProperty({ example: '1999-03-31' })
     @IsString()
@@ -285,14 +294,16 @@ export class GenerateMECDto {
     @IsEnum(WorkTypeEnum)
     workType: WorkTypeEnum;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         type: [ContentIdentifierDto],
         example: [{ namespace: 'ORG', value: 'wiflix-matrix-001' }],
+        description: 'Auto-generated from contentId if not provided',
     })
+    @IsOptional()
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => ContentIdentifierDto)
-    identifier: ContentIdentifierDto[];
+    identifier?: ContentIdentifierDto[];
 
     @ApiPropertyOptional({
         type: [RatingDto],
@@ -313,19 +324,33 @@ export class GenerateMECDto {
     @Type(() => CastMemberDto)
     cast: CastMemberDto[];
 
-    @ApiProperty({ example: 'en' })
+    @ApiPropertyOptional({
+        example: 'en',
+        description: 'Auto-defaults to first localizedInfo language if not provided',
+    })
+    @IsOptional()
     @IsString()
-    originalLanguage: string;
+    originalLanguage?: string;
 
-    @ApiProperty({ type: OrganizationDto, example: { id: 'md:orgid:wiflix', role: 'licensor' } })
+    @ApiPropertyOptional({
+        type: OrganizationDto,
+        example: { id: 'md:orgid:wiflix', role: 'licensor' },
+        description: 'Auto-generated from configured organization if not provided',
+    })
+    @IsOptional()
     @ValidateNested()
     @Type(() => OrganizationDto)
-    organization: OrganizationDto;
+    organization?: OrganizationDto;
 
-    @ApiProperty({ type: CompanyCreditDto, example: { value: 'WiFlix Studios', language: 'en-US' } })
+    @ApiPropertyOptional({
+        type: CompanyCreditDto,
+        example: { value: 'WiFlix Studios', language: 'en-US' },
+        description: 'Auto-generated from configured organization if not provided',
+    })
+    @IsOptional()
     @ValidateNested()
     @Type(() => CompanyCreditDto)
-    companyDisplayCredit: CompanyCreditDto;
+    companyDisplayCredit?: CompanyCreditDto;
 
     @ApiPropertyOptional({ type: CategoryInfoDto })
     @IsOptional()

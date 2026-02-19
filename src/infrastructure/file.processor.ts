@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { parse } from 'csv-parse';
 import {
     dataToImageOnlyXml,
@@ -17,22 +18,24 @@ import { extractCsvHeaders, validateFileType } from './file-type-detector';
 
 @Injectable()
 export class FileProcessor {
-    constructor() {}
+    constructor(private readonly configService: ConfigService) {}
 
     async processCSVFile(file: Express.Multer.File, config: UploadMmcMecDto): Promise<void> {
         // Validate file type before processing
         this.validateFileTypeMatch(file, config.variant);
 
         const parsedData = await this.parseCsvFile(file, config);
+        const defaultOrg = this.configService.get<string>('app.defaultOrganization', 'wiflix');
+
         switch (config.variant) {
             case FileVariant.ImageOnly:
-                await this.processImageOnlyDoc(parsedData as ImageOnlyCSVData[]);
+                await this.processImageOnlyDoc(parsedData as ImageOnlyCSVData[], defaultOrg);
                 break;
             case FileVariant.MEC:
-                await this.processMecDoc(parsedData as MECCSVData[]);
+                await this.processMecDoc(parsedData as MECCSVData[], defaultOrg);
                 break;
             case FileVariant.MMC:
-                await this.processMmcDoc(parsedData as MMCCSVData[]);
+                await this.processMmcDoc(parsedData as MMCCSVData[], defaultOrg);
                 break;
             default:
                 break;
@@ -68,11 +71,11 @@ export class FileProcessor {
         });
     }
 
-    private async processMecDoc(data: MECCSVData[]): Promise<void> {
+    private async processMecDoc(data: MECCSVData[], organization: string): Promise<void> {
         let i = 0;
         try {
             for (; i < data.length; i++) {
-                const xmlData = dataToMECXml(data[i]);
+                const xmlData = dataToMECXml(data[i], organization);
 
                 // write to file - extract filename safely from ContentID
                 const contentIdParts = data[i].ContentID?.split(':') || [];
@@ -90,11 +93,11 @@ export class FileProcessor {
         }
     }
 
-    private async processImageOnlyDoc(data: ImageOnlyCSVData[]): Promise<void> {
+    private async processImageOnlyDoc(data: ImageOnlyCSVData[], organization: string): Promise<void> {
         let i = 0;
         try {
             for (; i < data.length; i++) {
-                const xmlData = dataToImageOnlyXml(data[i]);
+                const xmlData = dataToImageOnlyXml(data[i], organization);
 
                 // write to file - extract filename safely from ContentID
                 const contentIdParts = data[i].ContentID?.split(':') || [];
@@ -114,11 +117,11 @@ export class FileProcessor {
         }
     }
 
-    private async processMmcDoc(data: MMCCSVData[]): Promise<void> {
+    private async processMmcDoc(data: MMCCSVData[], organization: string): Promise<void> {
         let i = 0;
         try {
             for (; i < data.length; i++) {
-                const xmlData = dataToMMCXml(data[i]);
+                const xmlData = dataToMMCXml(data[i], organization);
 
                 // write to file - extract filename safely from VideoTrackID
                 const videoTrackIdParts = data[i].VideoTrackID?.split(':') || [];

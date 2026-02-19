@@ -18,12 +18,53 @@ export class GenerateService {
         let contentId = data.contentId;
         if (!contentId && data.localizedInfo?.[0]?.titleDisplay) {
             const titleSlug = this.createSlugFromTitle(data.localizedInfo[0].titleDisplay);
-            const organization = data.organization?.id || defaultOrg;
-            contentId = MovieLabsIDGenerator.contentID(organization, titleSlug);
+            const organizationName = data.organization?.id?.split(':').pop() || defaultOrg;
+            contentId = MovieLabsIDGenerator.contentID(organizationName, titleSlug);
         }
 
         if (!contentId) {
             throw new Error('Either contentId or localizedInfo[0].titleDisplay is required');
+        }
+
+        // Auto-generate organization if not provided
+        const organization = data.organization || {
+            id: `md:orgid:${defaultOrg}`,
+            role: 'licensor',
+        };
+
+        // Auto-generate company display credit if not provided
+        const companyDisplayCredit = data.companyDisplayCredit || {
+            value: this.capitalizeWords(defaultOrg),
+            language: 'en-US',
+        };
+
+        // Auto-extract releaseYear from releaseDate if not provided
+        let releaseYear = data.releaseYear;
+        if (!releaseYear && data.releaseDate) {
+            releaseYear = data.releaseDate.split('-')[0];
+        }
+
+        // Auto-generate identifier from contentId if not provided
+        let identifier = data.identifier;
+        if (!identifier || identifier.length === 0) {
+            const contentSlug = contentId.split(':').pop() || 'content';
+            identifier = [
+                {
+                    namespace: 'ORG' as any,
+                    value: contentSlug,
+                },
+            ];
+        }
+
+        // Auto-default originalLanguage to first localizedInfo language if not provided
+        const originalLanguage = data.originalLanguage || data.localizedInfo?.[0]?.language?.split('-')[0] || 'en';
+
+        // Auto-generate parentContentId from parentTitleDisplay if provided
+        let parentContentId = data.category?.parentContentId;
+        if (data.category?.parentTitleDisplay && !parentContentId) {
+            const titleSlug = this.createSlugFromTitle(data.category.parentTitleDisplay);
+            const organizationName = organization.id.split(':').pop() || defaultOrg;
+            parentContentId = MovieLabsIDGenerator.contentID(organizationName, titleSlug);
         }
 
         // Convert DTO to MECData format
@@ -41,7 +82,7 @@ export class GenerateService {
                 primary: genre.primary,
                 subGenre: genre.subGenre,
             })),
-            releaseYear: data.releaseYear,
+            releaseYear,
             releaseDate: data.releaseDate,
             releaseHistory: data.releaseHistory.map(history => ({
                 type: history.type as any,
@@ -49,7 +90,7 @@ export class GenerateService {
                 date: history.date,
             })),
             workType: data.workType as any,
-            identifier: data.identifier.map(id => ({
+            identifier: identifier.map(id => ({
                 namespace: id.namespace as any,
                 value: id.value,
             })),
@@ -63,20 +104,20 @@ export class GenerateService {
                 billingBlockOrder: member.billingBlockOrder,
                 displayName: member.displayName,
             })),
-            originalLanguage: data.originalLanguage,
+            originalLanguage,
             organization: {
-                id: data.organization.id,
-                role: data.organization.role,
+                id: organization.id,
+                role: organization.role,
             },
             companyDisplayCredit: {
-                value: data.companyDisplayCredit.value,
-                language: data.companyDisplayCredit.language,
+                value: companyDisplayCredit.value,
+                language: companyDisplayCredit.language,
             },
             category: data.category
                 ? {
                       type: data.category.type as any,
                       sequenceNumber: data.category.sequenceNumber,
-                      parentContentId: data.category.parentContentId,
+                      parentContentId: parentContentId || data.category.parentContentId,
                   }
                 : undefined,
         };
@@ -309,5 +350,15 @@ export class GenerateService {
             .replace(/\s+/g, '-') // Replace spaces with hyphens
             .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
             .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+    }
+
+    /**
+     * Capitalize words for display (e.g., "wiflix" -> "Wiflix", "my-company" -> "My Company")
+     */
+    private capitalizeWords(text: string): string {
+        return text
+            .split(/[-_\s]/)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
     }
 }
