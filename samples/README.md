@@ -26,9 +26,39 @@ samples/
 
 ## 🆕 What's New
 
+### 🎉 Zero Configuration Required - All IDs Auto-Generated!
+
+**You don't need to provide ANY MovieLabs IDs!** Just provide your media files and content details:
+
+**For MEC (Metadata):**
+
+-   ✅ Just provide `TitleDisplay` → ContentID auto-generated
+-   ✅ Example: `"TitleDisplay": "The Matrix"` → `md:cid:org:wiflix:the-matrix`
+
+**For MMC (Manifest):**
+
+-   ✅ Just provide media file locations → All track IDs auto-generated
+-   ✅ VideoTrackID, AudioTrackID, SubtitleTrackID - all auto-generated
+-   ✅ PresentationID, ExperienceID, ALID - all auto-generated
+-   ✅ IDs use your video URL path as content slug
+
+**Example:**
+
+```json
+{
+    "video": [
+        {
+            "location": "https://cdn.com/my-movie/video.mp4"
+        }
+    ]
+}
+```
+
+Generates: `md:vidtrackid:org:wiflix:my-movie:video`
+
 ### Environment Configuration
 
-You can now configure the default organization via `.env` file:
+Configure your organization in `.env`:
 
 ```bash
 # .env
@@ -36,18 +66,6 @@ DEFAULT_ORGANIZATION=your-company-name
 ```
 
 All auto-generated IDs will use your organization instead of `wiflix`.
-
-### Auto-Generated ContentIDs from Title
-
-For MEC files, ContentID is automatically generated from `TitleDisplay`:
-
--   **Provide**: `TitleDisplay: "The Matrix"`
--   **Auto-generates**: `md:cid:org:wiflix:the-matrix`
-
-Or specify ContentID manually:
-
--   **Provide**: `ContentID: "md:cid:org:yourorg:custom-id"`
--   **Uses**: Exactly as provided
 
 **Slug Generation Examples:**
 
@@ -178,39 +196,27 @@ MMC example with multiple audio and subtitle tracks.
 
 #### `minimal-MEC.csv` (29 columns) ✅ RECOMMENDED FOR BEGINNERS
 
-**Use this if:** You want the simplest format with auto-generated ContentID.
+Simple example with basic content. ContentID auto-generated from TitleDisplay.
 
 **ContentID auto-generated from TitleDisplay:**
 
 -   Provide: `TitleDisplay` (e.g., "Simple Movie")
 -   Auto-generates: `md:cid:org:wiflix:simple-movie` (or your configured organization)
--   No need for separate slug column!
-
-**Required fields only:**
-
--   LocalizedInfo:language, TitleDisplay, Summary190, Summary400
--   Genre, ReleaseDate, WorkType, OriginalLanguage
--   Cast:JobFunction, Cast:BillingBlockOrder, Cast:DisplayName
+-   No ContentID column needed!
 
 **Example:**
 
 ```csv
 LocalizedInfo:language,TitleDisplay,...
-en-US,Chioma,...
+en-US,Simple Movie,...
 ```
 
-Auto-generates: `md:cid:org:wiflix:chioma`
+Auto-generates: `md:cid:org:wiflix:simple-movie`
 
-#### `optimized-MEC.csv` (29 columns) ✅ FULL CONTROL
+#### `optimized-MEC.csv` (29 columns) ✅ PRODUCTION EXAMPLE
 
-**Use this if:** You want to provide your own ContentID.
-
-**Uses ContentID explicitly:**
-
-```csv
-ContentID,LocalizedInfo:language,TitleDisplay,...
-md:cid:org:mycompany:my-movie,en-US,My Movie,...
-```
+Full example with complete metadata (genres, cast, ratings, art references).  
+ContentID auto-generated - same structure as minimal, just more complete data.
 
 #### `latest-MEC.csv` - LEGACY FORMAT
 
@@ -222,7 +228,7 @@ Legacy MEC format for backward compatibility. Use `minimal-MEC.csv` or `optimize
 
 #### `minimal-MMC.csv` (10 columns) ✅ RECOMMENDED FOR BEGINNERS
 
-**Use this if:** You want the simplest format with auto-generated IDs.
+Simplest format with only required fields. All IDs auto-generated.
 
 **Required fields only:**
 
@@ -237,12 +243,6 @@ Legacy MEC format for backward compatibility. Use `minimal-MEC.csv` or `optimize
 -   ExperienceID, ALID
 -   AspectRatio (calculated from WidthPixels/HeightPixels)
 
-**Organization Configuration:**
-
--   Set `DEFAULT_ORGANIZATION` in `.env` to customize auto-generated IDs
--   Default: `wiflix` (generates `md:vidtrackid:org:wiflix:...`)
--   Custom: `your-org` (generates `md:vidtrackid:org:your-org:...`)
-
 **Example:**
 
 ```csv
@@ -250,23 +250,18 @@ VideoType,VideoLanguage,VideoLocation,...
 primary,en-US,https://s3.../video.mp4,...
 ```
 
-#### `optimized-MMC.csv` (33 columns) ✅ FULL CONTROL
+#### `optimized-MMC.csv` (33 columns) ✅ ADVANCED - CUSTOM IDs
 
-**Use this if:** You want to provide your own MovieLabs IDs and have full control.
+**Use this if:** You need to provide your own MovieLabs IDs (rare - most users don't need this).
 
-**Includes all fields:**
+**Includes ID columns for custom values:**
 
 -   All minimal-MMC fields PLUS
--   VideoTrackID, AudioTrackID, SubtitleTrackID, ImageID
+-   VideoTrackID, AudioTrackID, SubtitleTrackID, ImageID (can specify or leave empty for auto-generation)
 -   PresentationID, PresentationIDTrackNum, PresentationIDVid, PresentationIDAud, PresentationIDSub
 -   ExperienceID, ALID
 
-**Example with multiple audio/subtitle tracks:**
-
-```csv
-VideoTrackID,VideoType,AudioTrackID,AudioLanguage,...
-md:vidtrackid:org:wiflix:movie:video,primary,md:audtrackid:org:wiflix:movie:audio1;md:audtrackid:org:wiflix:movie:audio2,en-US;es-ES,...
-```
+**Note:** Even in this format, you can leave ID columns empty and they'll be auto-generated!
 
 #### `mmcParsedType-with-image.csv` (41 columns) - COMPLETE SCHEMA
 

@@ -53,10 +53,7 @@ export class VideoPictureDto {
  * Audio track information
  */
 export class AudioTrackDto {
-    @ApiPropertyOptional({
-        example: 'md:audtrackid:org:wiflix:movie:audio-en-us',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-generated from location and language' })
     @IsOptional()
     @IsString()
     trackId?: string;
@@ -83,10 +80,7 @@ export class AudioTrackDto {
  * Video track information
  */
 export class VideoTrackDto {
-    @ApiPropertyOptional({
-        example: 'md:vidtrackid:org:wiflix:movie:video-en-us',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-generated from location and language' })
     @IsOptional()
     @IsString()
     trackId?: string;
@@ -118,10 +112,7 @@ export class VideoTrackDto {
  * Subtitle track information
  */
 export class SubtitleTrackDto {
-    @ApiPropertyOptional({
-        example: 'md:subtitletrackid:org:wiflix:movie:subtitle1',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-generated from location and language' })
     @IsOptional()
     @IsString()
     trackId?: string;
@@ -160,10 +151,7 @@ export class SubtitleTrackDto {
  * Image asset information
  */
 export class ImageAssetDto {
-    @ApiPropertyOptional({
-        example: 'md:imageid:org:wiflix:movie:cover',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-generated from location' })
     @IsOptional()
     @IsString()
     id?: string;
@@ -185,10 +173,7 @@ export class ImageAssetDto {
  * Presentation configuration
  */
 export class PresentationDto {
-    @ApiPropertyOptional({
-        example: 'md:presentationid:org:wiflix:movie:presentation',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-generated from video location' })
     @IsOptional()
     @IsString()
     id?: string;
@@ -198,23 +183,17 @@ export class PresentationDto {
     @IsString()
     trackNum?: string;
 
-    @ApiPropertyOptional({
-        example: 'md:vidtrackid:org:wiflix:movie:video',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-linked to first video track' })
     @IsOptional()
     @IsString()
     videoId?: string;
 
-    @ApiPropertyOptional({
-        example: 'md:audtrackid:org:wiflix:movie:audio1',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-linked to first audio track' })
     @IsOptional()
     @IsString()
     audioId?: string;
 
-    @ApiPropertyOptional({ example: 'md:subtitletrackid:org:wiflix:movie:subtitle1' })
+    @ApiPropertyOptional({ description: 'Auto-linked to first subtitle track if available' })
     @IsOptional()
     @IsString()
     subtitleId?: string;
@@ -224,18 +203,12 @@ export class PresentationDto {
  * Picture group configuration
  */
 export class PictureGroupDto {
-    @ApiPropertyOptional({
-        example: 'md:picturegroupid:org:wiflix:movie:group1',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-generated from organization' })
     @IsOptional()
     @IsString()
     id?: string;
 
-    @ApiProperty({
-        type: [String],
-        example: ['md:imageid:org:wiflix:movie:image1', 'md:imageid:org:wiflix:movie:image2'],
-    })
+    @ApiProperty({ type: [String], description: 'Reference image IDs to group together' })
     @IsArray()
     @IsString({ each: true })
     imageIds: string[];
@@ -245,7 +218,7 @@ export class PictureGroupDto {
  * Experience child relationship
  */
 export class ExperienceChildDto {
-    @ApiProperty({ example: 'md:experienceid:org:wiflix:movie:trailer' })
+    @ApiProperty({ description: 'Child experience ID (for trailers, bonus content, etc.)' })
     @IsString()
     id: string;
 
@@ -258,10 +231,7 @@ export class ExperienceChildDto {
  * Experience configuration
  */
 export class ExperienceDto {
-    @ApiPropertyOptional({
-        example: 'md:experienceid:org:wiflix:movie:experience',
-        description: 'Auto-generated if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-generated from video location' })
     @IsOptional()
     @IsString()
     id?: string;
@@ -285,15 +255,12 @@ export class ExperienceDto {
  * ALID to Experience mapping
  */
 export class ALIDExperienceDto {
-    @ApiPropertyOptional({ example: 'md:ALID:org:wiflix:movie', description: 'Auto-generated if not provided' })
+    @ApiPropertyOptional({ description: 'Auto-generated from video location' })
     @IsOptional()
     @IsString()
     alid?: string;
 
-    @ApiPropertyOptional({
-        example: 'md:experienceid:org:wiflix:movie:experience',
-        description: 'Auto-derived from experience array',
-    })
+    @ApiPropertyOptional({ description: 'Auto-linked to corresponding experience' })
     @IsOptional()
     @IsString()
     experienceId?: string;
@@ -302,8 +269,8 @@ export class ALIDExperienceDto {
 /**
  * MMC (Media Manifest Core) technical specifications for media files
  *
- * Contains video, audio, subtitle tracks and how they're combined into presentations.
- * See /samples/json/mmc-minimal.json and mmc-multiple-tracks.json for full examples.
+ * All IDs are auto-generated - just provide media locations and properties.
+ * See /samples/json/mmc-minimal.json and mmc-multiple-tracks.json for examples.
  */
 export class GenerateMMCDto {
     @ApiProperty({

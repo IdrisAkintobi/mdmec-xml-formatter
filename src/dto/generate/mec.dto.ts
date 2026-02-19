@@ -231,14 +231,11 @@ export class CategoryInfoDto {
 /**
  * MEC (Media Entertainment Core) metadata for content
  *
- * Contains title, cast, genres, ratings, and release information.
- * See /samples/json/mec-minimal.json and mec-complete.json for full examples.
+ * ContentID is auto-generated from title - just provide titleDisplay.
+ * See /samples/json/mec-minimal.json and mec-complete.json for examples.
  */
 export class GenerateMECDto {
-    @ApiPropertyOptional({
-        example: 'md:cid:org:wiflix:the-matrix',
-        description: 'Auto-generated from title if not provided',
-    })
+    @ApiPropertyOptional({ description: 'Auto-generated from titleDisplay if not provided' })
     @IsOptional()
     @IsString()
     contentId?: string;
