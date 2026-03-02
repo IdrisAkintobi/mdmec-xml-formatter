@@ -38,7 +38,10 @@ samples/
 -   ✅ `LocalizedInfo[0].language` → OriginalLanguage auto-defaulted (e.g., "en-US" → "en")
 -   ✅ Organization → Auto-generated from config (md:orgid:wiflix, role: licensor)
 -   ✅ Company Credit → Auto-generated from config (e.g., "Wiflix" from organization name)
--   ✅ `ParentTitleDisplay` → ParentContentID auto-generated (for episodes: "Game of Thrones Season 1" → md:cid:org:wiflix:game-of-thrones-season-1)
+-   ✅ **ParentContentID** → Auto-generated from simple title (both CSV and JSON)
+    -   **CSV**: Just provide title in `ParentContentID` column: `"Game of Thrones Season 1"` → auto-generates `md:cid:org:wiflix:game-of-thrones-season-1`
+    -   **JSON**: Use `parentTitleDisplay` field: `"parentTitleDisplay": "Game of Thrones Season 1"`
+    -   Both accept full IDs too if you prefer: `md:cid:org:wiflix:custom-id`
 -   ✅ Example: `"TitleDisplay": "The Matrix"` → `md:cid:org:wiflix:the-matrix`
 
 **For MMC (Manifest):**
