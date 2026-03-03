@@ -1,2 +1,2 @@
-VideoType,VideoLanguage,VideoLocation,WidthPixels,HeightPixels,AudioType,AudioLanguage,AudioLocation,ExperienceType,ExperienceSubType
-primary,en-US,https://cdn.wiflix.com/chioma-my-love/video.mp4,1920,1080,stereo,en-US,https://cdn.wiflix.com/chioma-my-love/audio.aac,Main,feature
+TitleDisplay,VideoType,VideoLanguage,VideoLocation,WidthPixels,HeightPixels,AudioType,AudioLanguage,AudioLocation,SubtitleType,SubtitleLanguage,SubtitleLocation,ExperienceType,ExperienceSubType
+Chioma My Love,primary,en-US,https://cdn.wiflix.com/chioma-my-love/video.mp4,1920,1080,stereo,en-US,https://cdn.wiflix.com/chioma-my-love/audio.aac,open,en-US,https://cdn.wiflix.com/chioma-my-love/subtitle.srt,Main,Feature
