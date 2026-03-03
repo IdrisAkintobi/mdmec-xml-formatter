@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MECBuilder, MMCBuilder, MovieLabsIDGenerator, type MECData, type MMCData } from 'mec-mmc-maker';
+import { MECBuilder, MMCBuilder, MovieLabsIDGenerator, titleToSlug, type MECData, type MMCData } from 'mec-mmc-maker';
 import { GenerateMECDto } from '../dto/generate/mec.dto';
 import { GenerateMMCDto } from '../dto/generate/mmc.dto';
 
@@ -17,7 +17,7 @@ export class GenerateService {
         // Auto-generate contentId if not provided but title is available
         let contentId = data.contentId;
         if (!contentId && data.localizedInfo?.[0]?.titleDisplay) {
-            const titleSlug = this.createSlugFromTitle(data.localizedInfo[0].titleDisplay);
+            const titleSlug = titleToSlug(data.localizedInfo[0].titleDisplay);
             const organizationName = data.organization?.id?.split(':').pop() || defaultOrg;
             contentId = MovieLabsIDGenerator.contentID(organizationName, titleSlug);
         }
@@ -62,7 +62,7 @@ export class GenerateService {
         // Auto-generate parentContentId from parentTitleDisplay if provided
         let parentContentId = data.category?.parentContentId;
         if (data.category?.parentTitleDisplay && !parentContentId) {
-            const titleSlug = this.createSlugFromTitle(data.category.parentTitleDisplay);
+            const titleSlug = titleToSlug(data.category.parentTitleDisplay);
             const organizationName = organization.id.split(':').pop() || defaultOrg;
             parentContentId = MovieLabsIDGenerator.contentID(organizationName, titleSlug);
         }
@@ -337,19 +337,6 @@ export class GenerateService {
     getFilenameFromUrl(url: string): string {
         const slug = this.extractSlugFromUrl(url);
         return slug.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    }
-
-    /**
-     * Create a URL-safe slug from a title
-     * @example "The Matrix: Reloaded" -> "the-matrix-reloaded"
-     */
-    private createSlugFromTitle(title: string): string {
-        return title
-            .toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-            .replace(/\s+/g, '-') // Replace spaces with hyphens
-            .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-            .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
     }
 
     /**
