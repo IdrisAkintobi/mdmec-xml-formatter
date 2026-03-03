@@ -81,9 +81,7 @@ export class FileProcessor {
                 const contentIdParts = data[i].ContentID?.split(':') || [];
                 const fileTitle = contentIdParts[4] || contentIdParts[contentIdParts.length - 1] || 'content';
                 const sequenceNumber = data[i].SequenceNumber ? `_${data[i].SequenceNumber}` : '';
-                const fileName = `${
-                    (fileTitle.trim() + sequenceNumber).replaceAll(/[^a-z0-9]/gi, '_').toLowerCase() + '_mec'
-                }.xml`;
+                const fileName = `${(fileTitle.trim() + sequenceNumber).toLowerCase()}_mec.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }
@@ -102,12 +100,7 @@ export class FileProcessor {
                 // write to file - extract filename safely from ContentID
                 const contentIdParts = data[i].ContentID?.split(':') || [];
                 const fileTitle = contentIdParts[4] || contentIdParts[contentIdParts.length - 1] || 'content';
-                const fileName = `${
-                    fileTitle
-                        .trim()
-                        .replaceAll(/[^a-z0-9]/gi, '_')
-                        .toLowerCase() + '_image_only'
-                }.xml`;
+                const fileName = `${fileTitle.trim().toLowerCase()}_image_only.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }
@@ -129,20 +122,17 @@ export class FileProcessor {
                 if (data[i].TitleDisplay) {
                     // Use TitleDisplay and convert to slug (same as ContentID generation)
                     fileTitle = data[i].TitleDisplay.toLowerCase()
-                        .replace(/[^a-z0-9\s-]/g, '')
-                        .replace(/\s+/g, '-')
-                        .replace(/-+/g, '-')
-                        .replace(/^-|-$/g, '');
+                        .replace(/[^a-z0-9\s\-_]/g, '') // Keep letters, numbers, spaces, hyphens, underscores
+                        .replace(/\s+/g, '-') // Replace spaces with hyphens
+                        .replace(/-+/g, '-') // Replace multiple hyphens with single
+                        .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
                 } else {
                     // Fallback to VideoTrackID extraction
                     const videoTrackIdParts = data[i].VideoTrackID?.split(':') || [];
                     fileTitle = videoTrackIdParts[4] || videoTrackIdParts[videoTrackIdParts.length - 1] || 'media';
                 }
 
-                const fileName = `${fileTitle
-                    .trim()
-                    .replaceAll(/[^a-z0-9-]/gi, '_')
-                    .toLowerCase()}_mmc.xml`;
+                const fileName = `${fileTitle.trim()}_mmc.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }
