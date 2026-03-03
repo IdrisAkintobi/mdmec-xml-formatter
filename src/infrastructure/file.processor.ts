@@ -123,15 +123,26 @@ export class FileProcessor {
             for (; i < data.length; i++) {
                 const xmlData = dataToMMCXml(data[i], organization);
 
-                // write to file - extract filename safely from VideoTrackID
-                const videoTrackIdParts = data[i].VideoTrackID?.split(':') || [];
-                const fileTitle = videoTrackIdParts[4] || videoTrackIdParts[videoTrackIdParts.length - 1] || 'media';
-                const fileName = `${
-                    fileTitle
-                        .trim()
-                        .replaceAll(/[^a-z0-9]/gi, '_')
-                        .toLowerCase() + '_mmc'
-                }.xml`;
+                // Generate filename from TitleDisplay (preferred) or VideoTrackID (fallback)
+                let fileTitle: string;
+
+                if (data[i].TitleDisplay) {
+                    // Use TitleDisplay and convert to slug (same as ContentID generation)
+                    fileTitle = data[i].TitleDisplay.toLowerCase()
+                        .replace(/[^a-z0-9\s-]/g, '')
+                        .replace(/\s+/g, '-')
+                        .replace(/-+/g, '-')
+                        .replace(/^-|-$/g, '');
+                } else {
+                    // Fallback to VideoTrackID extraction
+                    const videoTrackIdParts = data[i].VideoTrackID?.split(':') || [];
+                    fileTitle = videoTrackIdParts[4] || videoTrackIdParts[videoTrackIdParts.length - 1] || 'media';
+                }
+
+                const fileName = `${fileTitle
+                    .trim()
+                    .replaceAll(/[^a-z0-9-]/gi, '_')
+                    .toLowerCase()}_mmc.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }
