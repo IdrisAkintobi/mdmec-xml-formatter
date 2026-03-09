@@ -36,7 +36,7 @@
         "class-validator": "^0.14.1",
         "csv-parse": "^5.5.2",
         "fast-xml-parser": "^4.3.2",
-        "mec-mmc-maker": "file:../mec-mmc-maker",
+        "mec-mmc-maker": "npm:@idrisakintobi/mec-mmc-maker@^1.0.3",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.8.1",
         "swagger-ui-express": "^5.0.1",
