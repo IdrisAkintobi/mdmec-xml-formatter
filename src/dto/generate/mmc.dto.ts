@@ -96,10 +96,12 @@ export class SubtitleTrackDto {
     hash?: string;
     @IsString()
     frameRate: string;
+    @IsOptional()
     @IsString()
-    frameRateMultiplier: string;
+    frameRateMultiplier?: string;
+    @IsOptional()
     @IsString()
-    frameRateTimeCode: string;
+    frameRateTimeCode?: string;
 }
 
 /**
