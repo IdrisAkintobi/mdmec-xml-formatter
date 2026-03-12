@@ -1,7 +1,7 @@
 {
     "name": "mec-xml-formatter",
-    "version": "0.0.1",
-    "description": "",
+    "version": "2.0.0",
+    "description": "MEC/MMC XML formatter with JSON API and CSV upload support",
     "author": "Idris Akintobi",
     "private": "true",
     "license": "MIT",
