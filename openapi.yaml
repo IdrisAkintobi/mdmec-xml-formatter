@@ -1,0 +1,1223 @@
+openapi: 3.0.3
+info:
+    title: Amazon Prime Video XML Generator API
+    version: 1.0.0
+    description: |
+        REST API for generating MovieLabs-compliant MEC (Media Entertainment Core) and MMC (Media Manifest Core) XML files.
+
+        This service provides two approaches for XML generation:
+
+        1. **JSON API** (Recommended): Modern JSON-based endpoints with auto-generation of IDs and intelligent defaults
+        2. **CSV Upload** (Legacy): Upload CSV files to generate XML files in bulk
+
+        ## Features
+
+        - **MEC Generation**: Create content metadata XML (title, cast, genres, ratings, release dates)
+        - **MMC Generation**: Create technical specification XML (video/audio tracks, subtitles, presentations)
+        - **Auto-generation**: Automatically generates IDs, aspect ratios, and other derived fields
+        - **Multi-language**: Support for multiple languages and localization
+        - **MovieLabs Compliant**: MEC v2.9 and MMC v1.9 specifications
+
+        ## Auto-Generated Fields
+
+        The API intelligently auto-generates various fields to simplify integration:
+
+        ### MEC Auto-Generated:
+        - `contentId` - Generated from titleDisplay (slugified)
+        - `releaseYear` - Extracted from releaseDate
+        - `titleSort` - Removes articles (The, A, An) from titleDisplay
+        - `identifier` - Generated from contentId with ORG namespace
+        - `originalLanguage` - Defaults to first localizedInfo language code
+        - `organization` - Generated from configured organization
+        - `companyDisplayCredit` - Capitalized organization name
+
+        ### MMC Auto-Generated:
+        - Track IDs (video, audio, subtitle) - Generated from location URL + language
+        - Presentation ID, Experience ID, ALID
+        - `aspectRatio` - Calculated from heightPixels / widthPixels
+        - Video/audio/subtitle linking in presentations
+
+    contact:
+        name: WiFlix Support
+        url: https://github.com/wi-flix/mec-xml-formatter
+    license:
+        name: MIT
+        url: https://opensource.org/licenses/MIT
+
+servers:
+    - url: http://localhost:3000
+      description: Development server
+    - url: https://api.wiflix.com
+      description: Production server (update with your actual URL)
+
+tags:
+    - name: XML Generation (JSON API)
+      description: Modern JSON-based API endpoints for generating MEC and MMC XML files
+    - name: File Upload (CSV)
+      description: Legacy CSV upload endpoint for batch XML generation
+
+paths:
+    /generate/mec:
+        post:
+            tags:
+                - XML Generation (JSON API)
+            summary: Generate MEC XML from JSON
+            description: |
+                Generate Media Entertainment Core (MEC) XML file from JSON payload. 
+                MEC contains content metadata including title, cast, genres, ratings, and release dates.
+
+                The API automatically generates several fields:
+                - `contentId` from titleDisplay
+                - `releaseYear` from releaseDate
+                - `titleSort` by removing articles
+                - `identifier` array with ORG namespace
+                - `organization` and `companyDisplayCredit`
+            operationId: generateMEC
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GenerateMECDto'
+                        examples:
+                            minimal:
+                                summary: Minimal MEC (IDs auto-generated)
+                                value:
+                                    localizedInfo:
+                                        - language: en-US
+                                          titleDisplay: The Matrix
+                                          summary190: A computer hacker learns about the true nature of reality.
+                                    genre:
+                                        - primary: Action
+                                          subGenre:
+                                              - Sci-Fi
+                                    releaseDate: '1999-03-31'
+                                    releaseHistory:
+                                        - type: Theatrical
+                                          country: US
+                                          date: '1999-03-31'
+                                    workType: movie
+                                    cast:
+                                        - jobFunction: Actor
+                                          billingBlockOrder: '1'
+                                          displayName:
+                                              en-US: Keanu Reeves
+                                        - jobFunction: Director
+                                          billingBlockOrder: '2'
+                                          displayName:
+                                              en-US: The Wachowskis
+                            multiLanguage:
+                                summary: Multiple Languages
+                                value:
+                                    localizedInfo:
+                                        - language: en-US
+                                          titleDisplay: Parasite
+                                          summary190: A poor family schemes to become employed by a wealthy family.
+                                        - language: ko-KR
+                                          titleDisplay: 기생충
+                                          summary190: 가난한 가족이 부유한 가족의 집에 취업하려고 계획을 세운다.
+                                    genre:
+                                        - primary: Drama
+                                          subGenre:
+                                              - Thriller
+                                    releaseDate: '2019-05-30'
+                                    releaseHistory:
+                                        - type: Theatrical
+                                          country: KR
+                                          date: '2019-05-30'
+                                    workType: movie
+                                    cast:
+                                        - jobFunction: Actor
+                                          billingBlockOrder: '1'
+                                          displayName:
+                                              en-US: Song Kang-ho
+                                              ko-KR: 송강호
+                                        - jobFunction: Director
+                                          billingBlockOrder: '2'
+                                          displayName:
+                                              en-US: Bong Joon-ho
+                                              ko-KR: 봉준호
+                            withRatingsAndCast:
+                                summary: With Ratings and Extended Cast
+                                value:
+                                    localizedInfo:
+                                        - language: en-US
+                                          titleDisplay: Inception
+                                          summary190: A thief who steals corporate secrets through dream-sharing technology.
+                                          artReference:
+                                              - reference: https://cdn.wiflix.com/inception/cover.jpg
+                                                resolution: 1920x1080
+                                                purpose: cover
+                                    genre:
+                                        - primary: Action
+                                          subGenre:
+                                              - Sci-Fi
+                                              - Thriller
+                                    releaseDate: '2010-07-16'
+                                    releaseHistory:
+                                        - type: Theatrical
+                                          country: US
+                                          date: '2010-07-16'
+                                    workType: movie
+                                    rating:
+                                        - country: US
+                                          system: MPAA
+                                          value: PG-13
+                                        - country: GB
+                                          system: BBFC
+                                          value: '12A'
+                                    cast:
+                                        - jobFunction: Actor
+                                          billingBlockOrder: '1'
+                                          displayName:
+                                              en-US: Leonardo DiCaprio
+                                        - jobFunction: Actor
+                                          billingBlockOrder: '2'
+                                          displayName:
+                                              en-US: Joseph Gordon-Levitt
+                                        - jobFunction: Director
+                                          billingBlockOrder: '3'
+                                          displayName:
+                                              en-US: Christopher Nolan
+                            episodicContent:
+                                summary: Episodic Content (TV Show Episode)
+                                value:
+                                    localizedInfo:
+                                        - language: en-US
+                                          titleDisplay: The Pilot
+                                          summary190: The first episode introduces the main characters.
+                                    genre:
+                                        - primary: Comedy
+                                    releaseDate: '2020-01-15'
+                                    releaseHistory:
+                                        - type: Broadcast
+                                          country: US
+                                          date: '2020-01-15'
+                                    workType: episode
+                                    cast:
+                                        - jobFunction: Actor
+                                          billingBlockOrder: '1'
+                                          displayName:
+                                              en-US: Jane Doe
+                                    category:
+                                        type: Episode
+                                        sequenceNumber: '1'
+                                        parentTitleDisplay: My Comedy Show Season 1
+            responses:
+                '200':
+                    description: Successfully generated MEC XML file
+                    headers:
+                        Content-Disposition:
+                            schema:
+                                type: string
+                                example: 'attachment; filename="the-matrix_mec.xml"'
+                            description: Suggests filename for download
+                    content:
+                        application/xml:
+                            schema:
+                                type: string
+                                format: xml
+                            examples:
+                                mecXml:
+                                    summary: Sample MEC XML Output
+                                    value: |
+                                        <?xml version="1.0" encoding="UTF-8"?>
+                                        <mdmec:CoreMetadata xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.9">
+                                          <mdmec:Basic ContentID="md:cid:org:wiflix:the-matrix">
+                                            <mdmec:LocalizedInfo language="en-US">
+                                              <mdmec:TitleDisplay>The Matrix</mdmec:TitleDisplay>
+                                              <mdmec:TitleSort>Matrix</mdmec:TitleSort>
+                                            </mdmec:LocalizedInfo>
+                                            <mdmec:ReleaseYear>1999</mdmec:ReleaseYear>
+                                            <mdmec:WorkType>Movie</mdmec:WorkType>
+                                          </mdmec:Basic>
+                                        </mdmec:CoreMetadata>
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '500':
+                    $ref: '#/components/responses/InternalServerError'
+
+    /generate/mmc:
+        post:
+            tags:
+                - XML Generation (JSON API)
+            summary: Generate MMC XML from JSON
+            description: |
+                Generate Media Manifest Core (MMC) XML file from JSON payload. 
+                MMC contains technical specifications about media files including video/audio tracks, subtitles, and presentations.
+
+                The API automatically generates several fields:
+                - Track IDs (video, audio, subtitle) from location URLs
+                - Presentation ID, Experience ID, ALID
+                - `aspectRatio` calculated from dimensions
+                - Automatic linking of video/audio/subtitle tracks in presentations
+            operationId: generateMMC
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GenerateMMCDto'
+                        examples:
+                            minimal:
+                                summary: Minimal MMC (IDs auto-generated)
+                                value:
+                                    audio:
+                                        - type: stereo
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/audio_en.mp4
+                                    video:
+                                        - type: primary
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/video.mp4
+                                          picture:
+                                              heightPixels: '1080'
+                                              widthPixels: '1920'
+                                    presentation:
+                                        - {}
+                                    experience:
+                                        - type: Movie
+                                          subType: Feature
+                                    alidExperience:
+                                        - {}
+                            multipleAudio:
+                                summary: Multiple Audio Languages
+                                value:
+                                    audio:
+                                        - type: stereo
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/audio_en.mp4
+                                        - type: stereo
+                                          language: es-ES
+                                          location: https://cdn.wiflix.com/my-movie/audio_es.mp4
+                                        - type: '51'
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/audio_en_51.mp4
+                                    video:
+                                        - type: primary
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/video.mp4
+                                          picture:
+                                              heightPixels: '1080'
+                                              widthPixels: '1920'
+                                              progressive: true
+                                    presentation:
+                                        - {}
+                                    experience:
+                                        - type: Movie
+                                          subType: Feature
+                                    alidExperience:
+                                        - {}
+                            withSubtitlesAndImages:
+                                summary: With Subtitles and Images
+                                value:
+                                    audio:
+                                        - type: stereo
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/audio_en.mp4
+                                    video:
+                                        - type: primary
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/video.mp4
+                                          picture:
+                                              heightPixels: '2160'
+                                              widthPixels: '3840'
+                                    subtitle:
+                                        - type: open
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/subtitles_en.srt
+                                          frameRate: '23.976'
+                                          frameRateMultiplier: 1001/1000
+                                          frameRateTimeCode: NonDrop
+                                    image:
+                                        - purpose: Cover
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/cover.jpg
+                                        - purpose: Hero
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/hero.jpg
+                                    presentation:
+                                        - {}
+                                    experience:
+                                        - type: Movie
+                                          subType: Feature
+                                    alidExperience:
+                                        - {}
+                            withExplicitIds:
+                                summary: With Explicit IDs (not auto-generated)
+                                value:
+                                    audio:
+                                        - trackId: md:audiotrackid:org:wiflix:custom-audio-1
+                                          type: stereo
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/audio_en.mp4
+                                          hash: d41d8cd98f00b204e9800998ecf8427e
+                                    video:
+                                        - trackId: md:vidtrackid:org:wiflix:custom-video-1
+                                          type: primary
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/video.mp4
+                                          hash: 098f6bcd4621d373cade4e832627b4f6
+                                          picture:
+                                              heightPixels: '1080'
+                                              widthPixels: '1920'
+                                              aspectRatio: '16:9'
+                                    presentation:
+                                        - id: md:presentationid:org:wiflix:custom-presentation-1
+                                          trackNum: '0'
+                                          videoId: md:vidtrackid:org:wiflix:custom-video-1
+                                          audioId: md:audiotrackid:org:wiflix:custom-audio-1
+                                    experience:
+                                        - id: md:experienceid:org:wiflix:custom-experience-1
+                                          type: Movie
+                                          subType: Feature
+                                    alidExperience:
+                                        - alid: md:ALID:org:wiflix:custom-alid-1
+                                          experienceId: md:experienceid:org:wiflix:custom-experience-1
+                            multipleTracks:
+                                summary: Multiple Video and Audio Tracks
+                                value:
+                                    audio:
+                                        - type: stereo
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/audio_en_stereo.mp4
+                                        - type: '51'
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/audio_en_51.mp4
+                                        - type: stereo
+                                          language: fr-FR
+                                          location: https://cdn.wiflix.com/my-movie/audio_fr.mp4
+                                    video:
+                                        - type: primary
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/video_1080p.mp4
+                                          picture:
+                                              heightPixels: '1080'
+                                              widthPixels: '1920'
+                                        - type: primary
+                                          language: en-US
+                                          location: https://cdn.wiflix.com/my-movie/video_4k.mp4
+                                          picture:
+                                              heightPixels: '2160'
+                                              widthPixels: '3840'
+                                    presentation:
+                                        - {}
+                                        - {}
+                                    experience:
+                                        - type: Movie
+                                          subType: Feature
+                                    alidExperience:
+                                        - {}
+            responses:
+                '200':
+                    description: Successfully generated MMC XML file
+                    headers:
+                        Content-Disposition:
+                            schema:
+                                type: string
+                                example: 'attachment; filename="my-movie_mmc.xml"'
+                            description: Suggests filename for download
+                    content:
+                        application/xml:
+                            schema:
+                                type: string
+                                format: xml
+                            examples:
+                                mmcXml:
+                                    summary: Sample MMC XML Output
+                                    value: |
+                                        <?xml version="1.0" encoding="UTF-8"?>
+                                        <manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.9">
+                                          <manifest:Inventory>
+                                            <manifest:Video VideoTrackID="md:vidtrackid:org:wiflix:my-movie:video-en-us">
+                                              <manifest:Type>primary</manifest:Type>
+                                              <manifest:Language>en-US</manifest:Language>
+                                              <manifest:Picture>
+                                                <manifest:HeightPixels>1080</manifest:HeightPixels>
+                                                <manifest:WidthPixels>1920</manifest:WidthPixels>
+                                                <manifest:AspectRatio>16:9</manifest:AspectRatio>
+                                              </manifest:Picture>
+                                            </manifest:Video>
+                                          </manifest:Inventory>
+                                        </manifest:MediaManifest>
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '500':
+                    $ref: '#/components/responses/InternalServerError'
+
+    /upload/:
+        post:
+            tags:
+                - File Upload (CSV)
+            summary: Upload CSV file to generate XML
+            description: |
+                Upload CSV files (MEC, MMC, or Image-Only) to generate XML files. 
+                Returns a ZIP file containing the generated XML files.
+
+                This is the legacy CSV-based endpoint for batch processing.
+
+                **Supported Variants:**
+                - `MEC` - Media Entertainment Core CSV
+                - `MMC` - Media Manifest Core CSV  
+                - `ImageOnly` - Image-only CSV for metadata updates
+
+                **File Requirements:**
+                - Format: CSV
+                - Max size: 256KB
+                - Proper headers for selected variant
+
+                **Optional Row Range:**
+                - Use `from` and `to` parameters to process specific rows
+                - Useful for testing or incremental processing
+            operationId: uploadCSV
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            required:
+                                - file
+                                - variant
+                            properties:
+                                file:
+                                    type: string
+                                    format: binary
+                                    description: CSV file to upload (max 256KB)
+                                variant:
+                                    type: string
+                                    enum:
+                                        - MEC
+                                        - MMC
+                                        - ImageOnly
+                                    description: Type of CSV file being uploaded
+                                from:
+                                    type: integer
+                                    minimum: 1
+                                    description: Start row number for processing (1-indexed)
+                                    example: 1
+                                to:
+                                    type: integer
+                                    minimum: 1
+                                    description: End row number for processing (1-indexed)
+                                    example: 100
+                        encoding:
+                            file:
+                                contentType: text/csv
+            responses:
+                '200':
+                    description: Successfully processed CSV and generated XML files
+                    headers:
+                        Content-Disposition:
+                            schema:
+                                type: string
+                                example: 'attachment; filename="result.zip"'
+                            description: ZIP file containing generated XML files
+                    content:
+                        application/zip:
+                            schema:
+                                type: string
+                                format: binary
+                '400':
+                    $ref: '#/components/responses/BadRequest'
+                '422':
+                    description: Unprocessable Entity - File validation failed
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                            examples:
+                                fileTooLarge:
+                                    summary: File exceeds maximum size
+                                    value:
+                                        statusCode: 422
+                                        timestamp: '2026-03-12T10:30:00.000Z'
+                                        path: /upload/
+                                        message: File size exceeds maximum limit of 256KB
+                                invalidFileType:
+                                    summary: Invalid file format
+                                    value:
+                                        statusCode: 422
+                                        timestamp: '2026-03-12T10:30:00.000Z'
+                                        path: /upload/
+                                        message: Invalid file format. Only CSV files are accepted.
+                '500':
+                    $ref: '#/components/responses/InternalServerError'
+
+components:
+    schemas:
+        GenerateMECDto:
+            type: object
+            required:
+                - localizedInfo
+                - genre
+                - releaseDate
+                - releaseHistory
+                - workType
+                - cast
+            properties:
+                contentId:
+                    type: string
+                    description: Content identifier. Auto-generated from titleDisplay if not provided.
+                    example: md:cid:org:wiflix:the-matrix
+                localizedInfo:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/LocalizedInfo'
+                genre:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/Genre'
+                releaseYear:
+                    type: string
+                    description: Release year. Auto-extracted from releaseDate if not provided.
+                    pattern: '^\d{4}$'
+                    example: '1999'
+                releaseDate:
+                    type: string
+                    format: date
+                    description: Release date in ISO format (YYYY-MM-DD)
+                    example: '1999-03-31'
+                releaseHistory:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/ReleaseHistory'
+                workType:
+                    type: string
+                    enum:
+                        - movie
+                        - episode
+                        - promotion
+                        - season
+                        - series
+                    description: Type of content
+                identifier:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Identifier'
+                    description: Content identifiers. Auto-generated if not provided.
+                rating:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Rating'
+                cast:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/Cast'
+                originalLanguage:
+                    type: string
+                    description: Original content language. Defaults to first localizedInfo language if not provided.
+                    example: en-US
+                organization:
+                    $ref: '#/components/schemas/Organization'
+                companyDisplayCredit:
+                    $ref: '#/components/schemas/CompanyDisplayCredit'
+                category:
+                    $ref: '#/components/schemas/Category'
+
+        LocalizedInfo:
+            type: object
+            required:
+                - language
+                - titleDisplay
+            properties:
+                language:
+                    type: string
+                    description: Language code (ISO 639-1 with optional region)
+                    example: en-US
+                titleDisplay:
+                    type: string
+                    description: Display title for the content
+                    example: The Matrix
+                titleSort:
+                    type: string
+                    description: Sortable title. Auto-generated by removing articles if not provided.
+                    example: Matrix
+                summary190:
+                    type: string
+                    maxLength: 190
+                    description: Short summary (max 190 characters)
+                summary400:
+                    type: string
+                    maxLength: 400
+                    description: Medium summary (max 400 characters)
+                artReference:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ArtReference'
+
+        ArtReference:
+            type: object
+            required:
+                - reference
+                - resolution
+                - purpose
+            properties:
+                reference:
+                    type: string
+                    format: uri
+                    description: URL to the artwork image
+                    example: https://cdn.wiflix.com/the-matrix/cover.jpg
+                resolution:
+                    type: string
+                    description: Image resolution in WIDTHxHEIGHT format
+                    pattern: '^\d+x\d+$'
+                    example: 1920x1080
+                purpose:
+                    type: string
+                    description: Purpose of the artwork (e.g., cover, poster, hero)
+                    example: cover
+
+        Genre:
+            type: object
+            required:
+                - primary
+            properties:
+                primary:
+                    type: string
+                    description: Primary genre
+                    example: Action
+                subGenre:
+                    type: array
+                    items:
+                        type: string
+                    description: List of sub-genres
+                    example:
+                        - Sci-Fi
+                        - Thriller
+
+        ReleaseHistory:
+            type: object
+            required:
+                - type
+                - country
+                - date
+            properties:
+                type:
+                    type: string
+                    enum:
+                        - Original
+                        - Broadcast
+                        - DVD
+                        - Blu-ray
+                        - PayTV
+                        - InternetBuy
+                        - InternetRent
+                        - Theatrical
+                        - SVOD
+                    description: Type of release
+                country:
+                    type: string
+                    description: Country code (ISO 3166-1 alpha-2)
+                    pattern: '^[A-Z]{2}$'
+                    example: US
+                date:
+                    type: string
+                    format: date
+                    description: Release date in ISO format
+                    example: '1999-03-31'
+
+        Identifier:
+            type: object
+            required:
+                - namespace
+                - value
+            properties:
+                namespace:
+                    type: string
+                    enum:
+                        - EIDR
+                        - ISAN
+                        - IMDB
+                        - ORG
+                    description: Identifier namespace
+                value:
+                    type: string
+                    description: Identifier value
+                    example: md:cid:org:wiflix:the-matrix
+
+        Rating:
+            type: object
+            required:
+                - country
+                - system
+                - value
+            properties:
+                country:
+                    type: string
+                    description: Country code (ISO 3166-1 alpha-2)
+                    pattern: '^[A-Z]{2}$'
+                    example: US
+                system:
+                    type: string
+                    description: Rating system (e.g., MPAA, BBFC)
+                    example: MPAA
+                value:
+                    type: string
+                    description: Rating value (e.g., R, PG-13, 12A)
+                    example: PG-13
+
+        Cast:
+            type: object
+            required:
+                - jobFunction
+                - billingBlockOrder
+                - displayName
+            properties:
+                jobFunction:
+                    type: string
+                    description: Role in production (e.g., Actor, Director, Producer)
+                    example: Actor
+                billingBlockOrder:
+                    type: string
+                    description: Billing order (1-indexed)
+                    pattern: '^\d+$'
+                    example: '1'
+                displayName:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: Display name in various languages (key is language code)
+                    example:
+                        en-US: Keanu Reeves
+                        ja-JP: キアヌ・リーブス
+
+        Organization:
+            type: object
+            required:
+                - id
+                - role
+            properties:
+                id:
+                    type: string
+                    description: Organization identifier
+                    example: md:orgid:wiflix
+                role:
+                    type: string
+                    description: Organization role (e.g., licensor, distributor)
+                    example: licensor
+
+        CompanyDisplayCredit:
+            type: object
+            required:
+                - value
+                - language
+            properties:
+                value:
+                    type: string
+                    description: Company name for display
+                    example: WiFlix Studios
+                language:
+                    type: string
+                    description: Language code
+                    example: en-US
+
+        Category:
+            type: object
+            properties:
+                type:
+                    type: string
+                    enum:
+                        - Episode
+                        - Feature
+                        - Season
+                        - Series
+                        - Promotion
+                    description: Category type for episodic content
+                sequenceNumber:
+                    type: string
+                    description: Episode or season number
+                    pattern: '^\d+$'
+                    example: '3'
+                parentTitleDisplay:
+                    type: string
+                    description: Title of parent content (auto-generates parentContentId)
+                    example: Breaking Bad Season 1
+                parentContentId:
+                    type: string
+                    description: Content ID of parent (auto-generated from parentTitleDisplay if not provided)
+                    example: md:cid:org:wiflix:series:breaking-bad-season-1
+
+        GenerateMMCDto:
+            type: object
+            required:
+                - audio
+                - video
+                - presentation
+                - experience
+                - alidExperience
+            properties:
+                audio:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/AudioTrack'
+                video:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/VideoTrack'
+                subtitle:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SubtitleTrack'
+                image:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Image'
+                presentation:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/Presentation'
+                pictureGroup:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/PictureGroup'
+                experience:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/Experience'
+                alidExperience:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: '#/components/schemas/AlidExperience'
+                organization:
+                    type: string
+                    description: Organization name. Defaults to configured organization if not provided.
+                    example: wiflix
+
+        AudioTrack:
+            type: object
+            required:
+                - type
+                - language
+                - location
+            properties:
+                trackId:
+                    type: string
+                    description: Audio track identifier. Auto-generated from location and language if not provided.
+                    example: md:audiotrackid:org:wiflix:my-movie:audio-en-us
+                type:
+                    type: string
+                    description: Audio type (e.g., stereo, 51, 71, mono)
+                    example: stereo
+                language:
+                    type: string
+                    description: Language code
+                    example: en-US
+                location:
+                    type: string
+                    format: uri
+                    description: URL to the audio file
+                    example: https://cdn.wiflix.com/my-movie/audio_en.mp4
+                hash:
+                    type: string
+                    description: MD5 hash of the audio file
+                    example: d41d8cd98f00b204e9800998ecf8427e
+
+        VideoTrack:
+            type: object
+            required:
+                - type
+                - language
+                - location
+                - picture
+            properties:
+                trackId:
+                    type: string
+                    description: Video track identifier. Auto-generated from location and language if not provided.
+                    example: md:vidtrackid:org:wiflix:my-movie:video-en-us
+                type:
+                    type: string
+                    description: Video type (e.g., primary, bonus)
+                    example: primary
+                language:
+                    type: string
+                    description: Language code
+                    example: en-US
+                location:
+                    type: string
+                    format: uri
+                    description: URL to the video file
+                    example: https://cdn.wiflix.com/my-movie/video.mp4
+                hash:
+                    type: string
+                    description: MD5 hash of the video file
+                picture:
+                    $ref: '#/components/schemas/Picture'
+
+        Picture:
+            type: object
+            required:
+                - heightPixels
+                - widthPixels
+            properties:
+                heightPixels:
+                    type: string
+                    description: Video height in pixels
+                    pattern: '^\d+$'
+                    example: '1080'
+                widthPixels:
+                    type: string
+                    description: Video width in pixels
+                    pattern: '^\d+$'
+                    example: '1920'
+                aspectRatio:
+                    type: string
+                    description: Aspect ratio. Auto-calculated from dimensions if not provided.
+                    example: '16:9'
+                progressive:
+                    type: boolean
+                    description: Whether video is progressive scan
+                progressiveScanOrder:
+                    type: string
+                    description: Scan order if progressive
+
+        SubtitleTrack:
+            type: object
+            required:
+                - type
+                - language
+                - location
+                - frameRate
+                - frameRateMultiplier
+                - frameRateTimeCode
+            properties:
+                trackId:
+                    type: string
+                    description: Subtitle track identifier. Auto-generated if not provided.
+                    example: md:subtrackid:org:wiflix:my-movie:subtitle-en-us
+                type:
+                    type: string
+                    description: Subtitle type (e.g., open, closed)
+                    example: open
+                language:
+                    type: string
+                    description: Language code
+                    example: en-US
+                location:
+                    type: string
+                    format: uri
+                    description: URL to the subtitle file
+                    example: https://cdn.wiflix.com/my-movie/subtitles_en.srt
+                hash:
+                    type: string
+                    description: MD5 hash of the subtitle file
+                frameRate:
+                    type: string
+                    description: Frame rate (e.g., 23.976, 24, 25, 29.97)
+                    example: '23.976'
+                frameRateMultiplier:
+                    type: string
+                    description: Frame rate multiplier
+                    example: 1001/1000
+                frameRateTimeCode:
+                    type: string
+                    description: Time code format (e.g., NonDrop, Drop)
+                    example: NonDrop
+
+        Image:
+            type: object
+            required:
+                - purpose
+                - language
+                - location
+            properties:
+                id:
+                    type: string
+                    description: Image identifier. Auto-generated if not provided.
+                    example: md:imageid:org:wiflix:my-movie:cover
+                purpose:
+                    type: string
+                    enum:
+                        - Boxart
+                        - Cover
+                        - Hero
+                    description: Purpose of the image
+                language:
+                    type: string
+                    description: Language code
+                    example: en-US
+                location:
+                    type: string
+                    format: uri
+                    description: URL to the image file
+                    example: https://cdn.wiflix.com/my-movie/cover.jpg
+
+        Presentation:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: Presentation identifier. Auto-generated if not provided.
+                    example: md:presentationid:org:wiflix:my-movie:presentation
+                trackNum:
+                    type: string
+                    description: Track number. Defaults to "0" if not provided.
+                    pattern: '^\d+$'
+                    example: '0'
+                videoId:
+                    type: string
+                    description: Video track ID to use. Auto-linked to first video if not provided.
+                    example: md:vidtrackid:org:wiflix:my-movie:video-en-us
+                audioId:
+                    type: string
+                    description: Audio track ID to use. Auto-linked to first audio if not provided.
+                    example: md:audiotrackid:org:wiflix:my-movie:audio-en-us
+                subtitleId:
+                    type: string
+                    description: Subtitle track ID to use. Auto-linked to first subtitle if not provided.
+                    example: md:subtrackid:org:wiflix:my-movie:subtitle-en-us
+
+        PictureGroup:
+            type: object
+            required:
+                - imageIds
+            properties:
+                id:
+                    type: string
+                    description: Picture group identifier. Auto-generated if not provided.
+                    example: md:picturegroupid:org:wiflix:my-movie:group1
+                imageIds:
+                    type: array
+                    minItems: 1
+                    items:
+                        type: string
+                    description: Array of image IDs to group together
+                    example:
+                        - md:imageid:org:wiflix:my-movie:cover
+                        - md:imageid:org:wiflix:my-movie:hero
+
+        Experience:
+            type: object
+            required:
+                - type
+                - subType
+            properties:
+                id:
+                    type: string
+                    description: Experience identifier. Auto-generated if not provided.
+                    example: md:experienceid:org:wiflix:my-movie:experience
+                type:
+                    type: string
+                    enum:
+                        - Movie
+                        - Series
+                        - Season
+                        - Episode
+                    description: Content type
+                subType:
+                    type: string
+                    description: Content sub-type (e.g., Feature, Trailer)
+                    example: Feature
+                child:
+                    type: object
+                    properties:
+                        id:
+                            type: string
+                            description: Child content identifier
+                        relationship:
+                            type: string
+                            description: Relationship type (e.g., ischildof)
+                            example: ischildof
+
+        AlidExperience:
+            type: object
+            properties:
+                alid:
+                    type: string
+                    description: ALID identifier. Auto-generated if not provided.
+                    example: md:ALID:org:wiflix:my-movie
+                experienceId:
+                    type: string
+                    description: Experience ID to link. Auto-linked to first experience if not provided.
+                    example: md:experienceid:org:wiflix:my-movie:experience
+
+        ErrorResponse:
+            type: object
+            required:
+                - statusCode
+                - timestamp
+                - path
+                - message
+            properties:
+                statusCode:
+                    type: integer
+                    description: HTTP status code
+                    example: 400
+                timestamp:
+                    type: string
+                    format: date-time
+                    description: ISO 8601 timestamp of the error
+                    example: '2026-03-12T10:30:00.000Z'
+                path:
+                    type: string
+                    description: Request path that caused the error
+                    example: /generate/mec
+                message:
+                    oneOf:
+                        - type: string
+                        - type: array
+                          items:
+                              type: string
+                    description: Error message or array of validation errors
+                    example:
+                        - localizedInfo must contain at least 1 elements
+                        - releaseDate must be a valid ISO 8601 date string
+                error:
+                    type: string
+                    description: Error type
+                    example: Bad Request
+                stack:
+                    type: string
+                    description: Stack trace (only in development mode)
+
+    responses:
+        BadRequest:
+            description: Bad Request - Validation error
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                    examples:
+                        validationError:
+                            summary: Validation errors
+                            value:
+                                statusCode: 400
+                                timestamp: '2026-03-12T10:30:00.000Z'
+                                path: /generate/mec
+                                message:
+                                    - localizedInfo must contain at least 1 elements
+                                    - releaseDate must be a valid ISO 8601 date string
+                                    - workType must be one of the following values: movie, episode, promotion, season, series
+                                error: Bad Request
+                        missingRequired:
+                            summary: Missing required fields
+                            value:
+                                statusCode: 400
+                                timestamp: '2026-03-12T10:30:00.000Z'
+                                path: /generate/mmc
+                                message:
+                                    - audio should not be empty
+                                    - video should not be empty
+                                error: Bad Request
+
+        InternalServerError:
+            description: Internal Server Error
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                    example:
+                        statusCode: 500
+                        timestamp: '2026-03-12T10:30:00.000Z'
+                        path: /generate/mec
+                        message: An unexpected error occurred while generating XML
+                        error: Internal Server Error

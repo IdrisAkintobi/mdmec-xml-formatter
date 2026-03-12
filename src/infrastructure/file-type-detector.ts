@@ -233,13 +233,6 @@ export function validateFileType(headers: string[], expectedType: FileVariant): 
 }
 
 /**
- * Get expected fields for a file type (for error messages)
- */
-export function getExpectedFields(fileType: FileVariant): string[] {
-    return FILE_TYPE_SIGNATURES[fileType].required;
-}
-
-/**
  * Extract headers from CSV buffer
  */
 export function extractCsvHeaders(buffer: Buffer): string[] {

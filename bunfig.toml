@@ -1,0 +1,26 @@
+# Bun configuration file
+
+# Install configuration
+[install]
+# Configure package manager behavior
+cache = true
+registry = "https://registry.npmjs.org/"
+# Automatically install peer dependencies
+peer = true
+
+# Test runner configuration
+[test]
+# Test file patterns
+preload = ["./test/setup.ts"]
+# Coverage options
+# coverage = true
+
+# Runtime configuration
+[run]
+# Scripts to preload before running
+# preload = ["./instrumentation.ts"]
+
+# Development server (if using Bun.serve)
+[dev]
+# Port for development server
+# port = 3000

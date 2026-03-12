@@ -2,7 +2,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { setupSwagger } from './config/swagger.config';
 import { AllExceptionsFilter } from './filters/all.exception.filter';
 
 async function bootstrap() {
@@ -25,12 +24,8 @@ async function bootstrap() {
     // Enable exception filters
     app.useGlobalFilters(new AllExceptionsFilter(app.get(HttpAdapterHost)));
 
-    // Setup Swagger documentation
-    setupSwagger(app);
-
     await app.listen(port);
 
     console.log(`Application is running on: ${await app.getUrl()}`);
-    console.log(`Swagger documentation available at: ${await app.getUrl()}/api`);
 }
 bootstrap();

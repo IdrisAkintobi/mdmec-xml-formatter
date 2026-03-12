@@ -1,19 +1,14 @@
 import { Body, Controller, Post, Res, HttpStatus } from '@nestjs/common';
-import { ApiProduces, ApiConsumes } from '@nestjs/swagger';
 import { Response } from 'express';
 import { GenerateMECDto } from '../dto/generate/mec.dto';
 import { GenerateMMCDto } from '../dto/generate/mmc.dto';
 import { GenerateService } from '../services/generate.service';
-import { ApiGenerateMEC, ApiGenerateMMC } from '../decorators/swagger.decorators';
 
 @Controller('generate')
 export class GenerateController {
     constructor(private readonly generateService: GenerateService) {}
 
     @Post('mec')
-    @ApiGenerateMEC()
-    @ApiConsumes('application/json')
-    @ApiProduces('application/xml')
     async generateMEC(@Body() data: GenerateMECDto, @Res() res: Response): Promise<void> {
         try {
             const xml = await this.generateService.generateMECXml(data);
@@ -36,9 +31,6 @@ export class GenerateController {
     }
 
     @Post('mmc')
-    @ApiGenerateMMC()
-    @ApiConsumes('application/json')
-    @ApiProduces('application/xml')
     async generateMMC(@Body() data: GenerateMMCDto, @Res() res: Response): Promise<void> {
         try {
             const xml = await this.generateService.generateMMCXml(data);
