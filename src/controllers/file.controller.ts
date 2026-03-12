@@ -3,6 +3,7 @@ import {
     Controller,
     Header,
     HttpCode,
+    HttpException,
     HttpStatus,
     ParseFilePipeBuilder,
     Post,
@@ -26,13 +27,19 @@ export class FileController {
     @Header('Content-Disposition', 'attachment; filename="result.zip"')
     async uploadMDMECRecordFile(
         @UploadedFile(
-            new ParseFilePipeBuilder()
-                .addMaxSizeValidator({ maxSize: 256000 })
-                .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+            new ParseFilePipeBuilder().addMaxSizeValidator({ maxSize: 256000 }).build({
+                errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                fileIsRequired: true,
+            }),
         )
         file: Express.Multer.File,
         @Body() uploadMmcMecDto: UploadMmcMecDto,
     ): Promise<StreamableFile> {
+        // Validate CSV file extension
+        if (!file.originalname.toLowerCase().endsWith('.csv')) {
+            throw new HttpException('Only CSV files are allowed', HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
         await this.fileService.processFile(file, uploadMmcMecDto);
         return new StreamableFile(createReadStream(zipDir));
     }
