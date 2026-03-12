@@ -332,6 +332,21 @@ export class GenerateService {
     }
 
     /**
+     * Get filename from title (converts to slug format)
+     */
+    getFilenameFromTitle(title: string): string {
+        if (!title) return 'content';
+
+        // Convert title to slug format (same as titleToSlug from mec-mmc-maker)
+        return title
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/-+/g, '-') // Replace multiple hyphens with single
+            .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+    }
+
+    /**
      * Get filename from URL
      */
     getFilenameFromUrl(url: string): string {

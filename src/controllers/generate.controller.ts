@@ -13,12 +13,14 @@ export class GenerateController {
         try {
             const xml = await this.generateService.generateMECXml(data);
 
+            // Generate filename from title or contentId
+            const filename = this.generateService.getFilenameFromTitle(
+                data.localizedInfo?.[0]?.titleDisplay || data.contentId || 'content',
+            );
+
             // Set content type and filename
             res.setHeader('Content-Type', 'application/xml');
-            res.setHeader(
-                'Content-Disposition',
-                `attachment; filename="${this.generateService.getFilenameFromContentId(data.contentId)}_mec.xml"`,
-            );
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}_mec.xml"`);
 
             res.status(HttpStatus.OK).send(xml);
         } catch (error) {

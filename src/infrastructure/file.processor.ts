@@ -77,11 +77,24 @@ export class FileProcessor {
             for (; i < data.length; i++) {
                 const xmlData = dataToMECXml(data[i], organization);
 
-                // write to file - extract filename safely from ContentID
-                const contentIdParts = data[i].ContentID?.split(':') || [];
-                const fileTitle = contentIdParts[4] || contentIdParts[contentIdParts.length - 1] || 'content';
+                // Generate filename from TitleDisplay (preferred) or ContentID (fallback)
+                let fileTitle: string;
+
+                if (data[i].TitleDisplay) {
+                    // Use TitleDisplay and convert to slug
+                    fileTitle = data[i].TitleDisplay.toLowerCase()
+                        .replace(/[^a-z0-9\s\-_]/g, '') // Keep letters, numbers, spaces, hyphens, underscores
+                        .replace(/\s+/g, '-') // Replace spaces with hyphens
+                        .replace(/-+/g, '-') // Replace multiple hyphens with single
+                        .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+                } else {
+                    // Fallback to ContentID extraction
+                    const contentIdParts = data[i].ContentID?.split(':') || [];
+                    fileTitle = contentIdParts[4] || contentIdParts[contentIdParts.length - 1] || 'content';
+                }
+
                 const sequenceNumber = data[i].SequenceNumber ? `_${data[i].SequenceNumber}` : '';
-                const fileName = `${(fileTitle.trim() + sequenceNumber).toLowerCase()}_mec.xml`;
+                const fileName = `${fileTitle.trim()}${sequenceNumber}_mec.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }
@@ -97,10 +110,10 @@ export class FileProcessor {
             for (; i < data.length; i++) {
                 const xmlData = dataToImageOnlyXml(data[i], organization);
 
-                // write to file - extract filename safely from ContentID
+                // Generate filename from ContentID
                 const contentIdParts = data[i].ContentID?.split(':') || [];
                 const fileTitle = contentIdParts[4] || contentIdParts[contentIdParts.length - 1] || 'content';
-                const fileName = `${fileTitle.trim().toLowerCase()}_image_only.xml`;
+                const fileName = `${fileTitle.trim()}_image_only.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }

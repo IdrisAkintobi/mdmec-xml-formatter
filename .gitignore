@@ -6,7 +6,11 @@
 .env
 .env.local
 .env.*.local
+
+# Temporary files
 temp
+result.zip
+
 .eslintcache
 
 # Logs
