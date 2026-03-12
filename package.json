@@ -13,6 +13,7 @@
         "start:dev": "nest start --watch",
         "start:debug": "nest start --debug --watch",
         "start:prod": "bun run dist/main.js",
+        "deploy:v2": "gcloud builds submit --region=us-central1 --config=cloudbuild.v2.yaml --substitutions=SHORT_SHA=$(git rev-parse --short HEAD)",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "test": "jest",
         "test:watch": "jest --watch",
@@ -36,7 +37,7 @@
         "class-validator": "^0.14.1",
         "csv-parse": "^5.5.2",
         "fast-xml-parser": "^4.3.2",
-        "mec-mmc-maker": "^1.0.4",
+        "mec-mmc-maker": "^1.0.8",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.8.1",
         "zip-a-folder": "^3.1.3"

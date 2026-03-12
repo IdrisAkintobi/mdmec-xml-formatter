@@ -309,7 +309,7 @@ paths:
                                     alidExperience:
                                         - {}
                             withSubtitlesAndImages:
-                                summary: With Subtitles and Images
+                                summary: With Subtitles and Images (minimal subtitle fields)
                                 value:
                                     audio:
                                         - type: stereo
@@ -327,8 +327,6 @@ paths:
                                           language: en-US
                                           location: https://cdn.wiflix.com/my-movie/subtitles_en.srt
                                           frameRate: '23.976'
-                                          frameRateMultiplier: 1001/1000
-                                          frameRateTimeCode: NonDrop
                                     image:
                                         - purpose: Cover
                                           language: en-US
@@ -987,8 +985,6 @@ components:
                 - language
                 - location
                 - frameRate
-                - frameRateMultiplier
-                - frameRateTimeCode
             properties:
                 trackId:
                     type: string
@@ -1009,18 +1005,18 @@ components:
                     example: https://cdn.wiflix.com/my-movie/subtitles_en.srt
                 hash:
                     type: string
-                    description: MD5 hash of the subtitle file
+                    description: MD5 hash of the subtitle file (optional)
                 frameRate:
                     type: string
-                    description: Frame rate (e.g., 23.976, 24, 25, 29.97)
+                    description: 'Frame rate - REQUIRED (e.g., 23.976, 24, 25, 29.97)'
                     example: '23.976'
                 frameRateMultiplier:
                     type: string
-                    description: Frame rate multiplier
+                    description: 'Frame rate multiplier - OPTIONAL (e.g., 1001/1000)'
                     example: 1001/1000
                 frameRateTimeCode:
                     type: string
-                    description: Time code format (e.g., NonDrop, Drop)
+                    description: 'Time code format - OPTIONAL, defaults to NonDrop (e.g., NonDrop, Drop)'
                     example: NonDrop
 
         Image:

@@ -267,7 +267,12 @@ This service generates XML files compliant with:
 -   MovieLabs MEC (Media Entertainment Core) v2.9
 -   MovieLabs MMC (Media Manifest Core) v1.9
 
-For more information: [MovieLabs Specifications](https://www.movielabs.com)
+### Documentation Resources
+
+-   [MovieLabs Specifications](https://www.movielabs.com)
+-   [Amazon Prime Video - MEC Title Metadata Guide](https://videocentral.amazon.com/support/delivery-experience/mec-title-meta-data)
+-   [Amazon Prime Video - MMC Asset Manifest Guide](https://videocentral.amazon.com/support/delivery-experience/mmc-asset-manifest)
+-   [Amazon Prime Video - Metadata Overview](https://videocentral.amazon.com/support/delivery-experience/metadata-guide)
 
 ## Common Use Cases
 

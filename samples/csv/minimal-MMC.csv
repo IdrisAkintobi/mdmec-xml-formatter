@@ -1,2 +1,4 @@
-TitleDisplay,VideoType,VideoLanguage,VideoLocation,WidthPixels,HeightPixels,AudioType,AudioLanguage,AudioLocation,SubtitleType,SubtitleLanguage,SubtitleLocation,ExperienceType,ExperienceSubType
-Chioma My Love,primary,en-US,https://cdn.wiflix.com/chioma-my-love/video.mp4,1920,1080,stereo,en-US,https://cdn.wiflix.com/chioma-my-love/audio.aac,open,en-US,https://cdn.wiflix.com/chioma-my-love/subtitle.srt,Main,Feature
+TitleDisplay,VideoType,VideoLanguage,VideoLocation,WidthPixels,HeightPixels,AudioType,AudioLanguage,AudioLocation,SubtitleType,SubtitleLanguage,SubtitleLocation,SubtitleFrameRate,ExperienceType,ExperienceSubType
+Chioma My Love,primary,en-US,https://cdn.wiflix.com/chioma-my-love/video.mp4,1920,1080,stereo,en-US,https://cdn.wiflix.com/chioma-my-love/audio.aac,Normal,en-US,https://cdn.wiflix.com/chioma-my-love/subtitle.srt,23.976,Main,Feature
+Football_Nation_Season_3_Episode_4,HD,en-US,Football_Nation_Season_3_Episode_4_HD_En_Stereo.mp4,1280,720,Stereo,en-US,Football_Nation_Season_3_Episode_4_HD_En_Stereo.mp3,Normal,en-US,Football_Nation_Season_3_Episode_4_HD_En_Stereo.srt,23.976,Main,Episode
+Football_Nation_Season_3_Episode_5,HD,en-US,Football_Nation_Season_3_Episode_5_HD_En_Stereo.mp4,1280,720,,,,,,,,Main,Episode

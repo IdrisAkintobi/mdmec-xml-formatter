@@ -38,5 +38,4 @@ steps:
               'managed',
               '--allow-unauthenticated',
               '--labels=build-id=$BUILD_ID,version=v2',
-              '--tag=v2',
           ]
