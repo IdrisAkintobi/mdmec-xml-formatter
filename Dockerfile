@@ -1,26 +1,32 @@
-FROM oven/bun:1.2.0 AS base
+# Use specific Bun version for reproducible builds
+FROM oven/bun:1.3.10 AS base
 WORKDIR /app
-RUN bun install @nestjs/cli -g
 
 # Ensure bun user has permissions to modify /app and /tmp
 RUN chown -R bun:bun /app /tmp && chmod -R 777 /app /tmp
 
-# install dependencies
-FROM base AS build
-COPY package.json bun.lock ./
+# Install dependencies
+FROM base AS install
+COPY package.json bun.lock bunfig.toml ./
 RUN bun install --frozen-lockfile
 
-# build app
-# ENV NODE_ENV=production
+# Build app using bun build:prod command
+FROM base AS build
+COPY --from=install /app/node_modules ./node_modules
+COPY package.json bun.lock bunfig.toml ./
 COPY tsconfig.json tsconfig.build.json ./
 COPY src/ src/
-RUN bun run build
+ENV NODE_ENV=production
+RUN bun run build:prod
 
-# copy dist and start app
+# Production image
 FROM base AS app
+COPY --from=install /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
+COPY package.json ./
 
 USER bun
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "dist/main.js" ]
+ENV NODE_ENV=production
+ENV PORT=3000
+ENTRYPOINT [ "bun", "run", "start:prod" ]
