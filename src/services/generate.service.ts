@@ -74,9 +74,9 @@ export class GenerateService {
                 language: info.language,
                 titleDisplay: info.titleDisplay,
                 titleSort: info.titleSort,
+                artReference: info.artReference,
                 summary190: info.summary190,
                 summary400: info.summary400,
-                artReference: info.artReference,
             })),
             genre: data.genre.map(genre => ({
                 primary: genre.primary,
