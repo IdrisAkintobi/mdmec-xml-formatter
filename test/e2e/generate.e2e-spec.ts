@@ -26,7 +26,7 @@ describe('Generate Controller (e2e)', () => {
             const payload = {
                 audio: [
                     {
-                        type: 'stereo',
+                        type: 'primary',
                         language: 'en-US',
                         location: 'https://cdn.wiflix.com/test-movie/audio.aac',
                     },
@@ -71,17 +71,17 @@ describe('Generate Controller (e2e)', () => {
             const payload = {
                 audio: [
                     {
-                        type: 'stereo',
+                        type: 'primary',
                         language: 'en-US',
                         location: 'https://cdn.wiflix.com/test-movie/audio-en.aac',
                     },
                     {
-                        type: 'stereo',
+                        type: 'primary',
                         language: 'es-ES',
                         location: 'https://cdn.wiflix.com/test-movie/audio-es.aac',
                     },
                     {
-                        type: '51',
+                        type: 'commentary',
                         language: 'en-US',
                         location: 'https://cdn.wiflix.com/test-movie/audio-surround.aac',
                     },
@@ -119,7 +119,7 @@ describe('Generate Controller (e2e)', () => {
             const payload = {
                 audio: [
                     {
-                        type: 'stereo',
+                        type: 'primary',
                         language: 'en-US',
                         location: 'https://cdn.wiflix.com/test-movie/audio.aac',
                     },
@@ -137,7 +137,7 @@ describe('Generate Controller (e2e)', () => {
                 ],
                 subtitle: [
                     {
-                        type: 'open',
+                        type: 'normal',
                         language: 'en-US',
                         location: 'https://cdn.wiflix.com/test-movie/subtitle.srt',
                         frameRate: '23.976',
@@ -178,7 +178,7 @@ describe('Generate Controller (e2e)', () => {
                 audio: [
                     {
                         trackId: customAudioId,
-                        type: 'stereo',
+                        type: 'primary',
                         language: 'en-US',
                         location: 'https://cdn.wiflix.com/test-movie/audio.aac',
                     },
@@ -215,7 +215,7 @@ describe('Generate Controller (e2e)', () => {
             const invalidPayload = {
                 audio: [
                     {
-                        type: 'stereo',
+                        type: 'primary',
                         language: 'en-US',
                         // Missing location
                     },
@@ -233,7 +233,7 @@ describe('Generate Controller (e2e)', () => {
             const invalidPayload = {
                 audio: [
                     {
-                        type: 'stereo',
+                        type: 'primary',
                         language: 'en-US',
                         location: 'https://cdn.wiflix.com/test-movie/audio.aac',
                     },
