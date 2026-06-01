@@ -93,8 +93,7 @@ export class FileProcessor {
                     fileTitle = contentIdParts[4] || contentIdParts[contentIdParts.length - 1] || 'content';
                 }
 
-                const sequenceNumber = data[i].SequenceNumber ? `_${data[i].SequenceNumber}` : '';
-                const fileName = `${fileTitle.trim()}${sequenceNumber}_mec.xml`;
+                const fileName = `${fileTitle.trim()}_mec.xml`;
                 const filePath = `${tempDir}/${fileName}`;
                 await writeFile(filePath, xmlData);
             }
