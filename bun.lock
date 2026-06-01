@@ -13,7 +13,7 @@
         "class-validator": "^0.14.1",
         "csv-parse": "^5.5.2",
         "fast-xml-parser": "^4.3.2",
-        "mec-mmc-maker": "^2.0.0",
+        "mec-mmc-maker": "^2.1.0",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.8.1",
         "zip-a-folder": "^3.1.3",
@@ -928,7 +928,7 @@
 
     "math-intrinsics": ["math-intrinsics@1.1.0", "", {}, ""],
 
-    "mec-mmc-maker": ["mec-mmc-maker@2.0.0", "", { "dependencies": { "fast-xml-parser": "^4.5.0" } }, "sha512-0La4u2kKBZsH529SLPnrCG5yzjvoPtyoVipG/drSyPvRVoKAgkTWdHjs6nHxIyFvEaED1AykDIsmNotGjhpQow=="],
+    "mec-mmc-maker": ["mec-mmc-maker@2.1.0", "", { "dependencies": { "fast-xml-parser": "^4.5.0" } }, "sha512-qr8DRTko9stX6d0GOeMyEkExdD54OkV8BYlMm5jTZmGfaGnoL9DSqImVhfcq16SCSsV76pyB1R4CQNvgc6L3Og=="],
 
     "media-typer": ["media-typer@1.1.0", "", {}, ""],
 
