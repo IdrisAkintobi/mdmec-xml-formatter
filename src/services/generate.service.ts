@@ -328,22 +328,20 @@ export class GenerateService {
     getFilenameFromContentId(contentId: string): string {
         const parts = contentId.split(':');
         const slug = parts[4] || parts[parts.length - 1] || 'content';
-        return slug.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        return slug.replace(/[^a-zA-Z0-9\-_]/g, '_');
     }
 
     /**
-     * Get filename from title (converts to slug format)
+     * Get filename from title (converts to underscore-joined slug preserving case)
      */
     getFilenameFromTitle(title: string): string {
         if (!title) return 'content';
 
-        // Convert title to slug format (same as titleToSlug from mec-mmc-maker)
         return title
-            .toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-            .replace(/\s+/g, '-') // Replace spaces with hyphens
-            .replace(/-+/g, '-') // Replace multiple hyphens with single
-            .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+            .replace(/[^a-zA-Z0-9\s\-_]/g, '') // Remove special characters
+            .replace(/\s+/g, '_') // Replace spaces with underscores
+            .replace(/_+/g, '_') // Replace multiple underscores with single
+            .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
     }
 
     /**
@@ -351,7 +349,7 @@ export class GenerateService {
      */
     getFilenameFromUrl(url: string): string {
         const slug = this.extractSlugFromUrl(url);
-        return slug.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        return slug.replace(/[^a-zA-Z0-9\-_]/g, '_');
     }
 
     /**

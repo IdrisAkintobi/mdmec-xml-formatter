@@ -81,12 +81,11 @@ export class FileProcessor {
                 let fileTitle: string;
 
                 if (data[i].TitleDisplay) {
-                    // Use TitleDisplay and convert to slug
-                    fileTitle = data[i].TitleDisplay.toLowerCase()
-                        .replace(/[^a-z0-9\s\-_]/g, '') // Keep letters, numbers, spaces, hyphens, underscores
-                        .replace(/\s+/g, '-') // Replace spaces with hyphens
-                        .replace(/-+/g, '-') // Replace multiple hyphens with single
-                        .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+                    // Use TitleDisplay and convert to underscore-joined slug preserving case
+                    fileTitle = data[i].TitleDisplay.replace(/[^a-zA-Z0-9\s\-_]/g, '') // Keep letters, numbers, spaces, hyphens, underscores
+                        .replace(/\s+/g, '_') // Replace spaces with underscores
+                        .replace(/_+/g, '_') // Replace multiple underscores with single
+                        .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
                 } else {
                     // Fallback to ContentID extraction
                     const contentIdParts = data[i].ContentID?.split(':') || [];
@@ -132,12 +131,11 @@ export class FileProcessor {
                 let fileTitle: string;
 
                 if (data[i].TitleDisplay) {
-                    // Use TitleDisplay and convert to slug (same as ContentID generation)
-                    fileTitle = data[i].TitleDisplay.toLowerCase()
-                        .replace(/[^a-z0-9\s\-_]/g, '') // Keep letters, numbers, spaces, hyphens, underscores
-                        .replace(/\s+/g, '-') // Replace spaces with hyphens
-                        .replace(/-+/g, '-') // Replace multiple hyphens with single
-                        .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+                    // Use TitleDisplay and convert to underscore-joined slug preserving case
+                    fileTitle = data[i].TitleDisplay.replace(/[^a-zA-Z0-9\s\-_]/g, '') // Keep letters, numbers, spaces, hyphens, underscores
+                        .replace(/\s+/g, '_') // Replace spaces with underscores
+                        .replace(/_+/g, '_') // Replace multiple underscores with single
+                        .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
                 } else {
                     // Fallback to VideoTrackID extraction
                     const videoTrackIdParts = data[i].VideoTrackID?.split(':') || [];
