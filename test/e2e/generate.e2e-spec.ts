@@ -112,7 +112,9 @@ describe('Generate Controller (e2e)', () => {
             // Should have unique audio track IDs based on language
             expect(response.text).toContain('audio-en-us');
             expect(response.text).toContain('audio-es-es');
-            expect(response.text.match(/AudioTrackID/g)).toHaveLength(3);
+            // 3 Inventory <manifest:Audio AudioTrackID="..."> attributes + the
+            // Presentation <manifest:AudioTrackID> open/close tags (counted as 2) = 5
+            expect(response.text.match(/AudioTrackID/g)).toHaveLength(5);
         });
 
         it('should generate MMC XML with subtitles and images', async () => {
